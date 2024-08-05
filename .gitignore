@@ -1,0 +1,16 @@
+﻿################################################################################
+# Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Pratica/.vs/Pratica
+/Pratica/Pratica.API/obj
+/Pratica/Pratica.Application/obj
+/Pratica/Pratica.Domain/obj
+/Pratica/Pratica.Infra/obj
+/Pratica/Pratica.Test/obj
+/Pratica/Pratica.API/bin/Debug/net8.0
+/Pratica/Pratica.Application/bin/Debug/net8.0
+/Pratica/Pratica.Domain/bin/Debug/net8.0
+/Pratica/Pratica.Infra/bin/Debug/net8.0
+/Pratica/Pratica.Test/bin/Debug/net8.0
