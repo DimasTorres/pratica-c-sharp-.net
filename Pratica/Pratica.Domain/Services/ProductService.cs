@@ -1,6 +1,8 @@
 ﻿using Pratica.Domain.Interfaces.Repositories;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
+using Pratica.Domain.Validators;
+using Pratica.Domain.Validators.Base;
 
 namespace Pratica.Domain.Services
 {
@@ -13,27 +15,35 @@ namespace Pratica.Domain.Services
             _productRepository = productRepository;
         }
 
-        public Task CreateAsync(ProductModel request)
+        public async Task<Response> CreateAsync(ProductModel request)
+        {
+            var response = new Response();
+
+            var validate = new ProductValidation();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
+            await _productRepository.CreateAsync(request);
+            return response;
+        }
+
+        public Task<Response> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(string id)
+        public Task<Response<List<ProductModel>>> GetAllAsync(string id = null, string name = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ProductModel>> GetAllAsync(string id = null, string name = null)
+        public Task<Response<ProductModel>> GetByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ProductModel> GetByIdAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(ProductModel request)
+        public Task<Response> UpdateAsync(ProductModel request)
         {
             throw new NotImplementedException();
         }

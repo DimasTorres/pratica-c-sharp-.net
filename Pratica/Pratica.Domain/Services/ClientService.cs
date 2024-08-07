@@ -2,6 +2,7 @@
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
 using Pratica.Domain.Validators;
+using Pratica.Domain.Validators.Base;
 
 namespace Pratica.Domain.Services
 {
@@ -14,39 +15,35 @@ namespace Pratica.Domain.Services
             _clientRepository = clientRepository;
         }
 
-        public Task CreateAsync(ClientModel request)
+        public async Task<Response> CreateAsync(ClientModel request)
         {
+            var response = new Response();
+
             var validate = new ClientValidation();
-            var resultValidation = validate.Validate(request);
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
 
-            if (!resultValidation.IsValid)
-            {
-                foreach (var error in resultValidation.Errors)
-                {
-
-                }
-            }
-
-            _clientRepository.CreateAsync(request);
-            throw new NotImplementedException();
+            await _clientRepository.CreateAsync(request);
+            return response;
         }
 
-        public Task DeleteAsync(string id)
+        public Task<Response> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ClientModel>> GetAllAsync(string id = null, string name = null)
+        public Task<Response<List<ClientModel>>> GetAllAsync(string id = null, string name = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ClientModel> GetByIdAsync(string id)
+        public Task<Response<ClientModel>> GetByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(ClientModel request)
+        public Task<Response> UpdateAsync(ClientModel request)
         {
             throw new NotImplementedException();
         }
