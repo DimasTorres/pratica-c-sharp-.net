@@ -28,24 +28,75 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public Task<Response> DeleteAsync(string id)
+        public async Task<Response> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var exists = await _productRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
+                return response;
+            }
+
+            await _productRepository.DeleteAsync(id);
+            return response;
         }
 
-        public Task<Response<List<ProductModel>>> GetAllAsync(string id = null, string name = null)
+        public async Task<Response<List<ProductModel>>> GetAllAsync(Guid id, string name = null)
         {
-            throw new NotImplementedException();
+            var response = new Response<List<ProductModel>>();
+
+            if (id != Guid.Empty)
+            {
+                var exists = await _productRepository.ExistByIdAsync(id);
+                if (!exists)
+                {
+                    response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
+                    return response;
+                }
+            }
+
+            var result = await _productRepository.GetAllAsync(id, name);
+            response.Data = result;
+            return response;
         }
 
-        public Task<Response<ProductModel>> GetByIdAsync(string id)
+        public async Task<Response<ProductModel>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response<ProductModel>();
+
+            var exists = await _productRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
+                return response;
+            }
+
+            var result = await _productRepository.GetByIdAsync(id);
+            response.Data = result;
+
+            return response;
         }
 
-        public Task<Response> UpdateAsync(ProductModel request)
+        public async Task<Response> UpdateAsync(ProductModel request)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var validate = new ProductValidation();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
+            var exists = await _productRepository.ExistByIdAsync(request.Id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Product {request.Id} not found."));
+                return response;
+            }
+
+            await _productRepository.UpdateAsync(request);
+            return response;
         }
     }
 }

@@ -33,24 +33,75 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public Task<Response> DeleteAsync(string id)
+        public async Task<Response> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var exists = await _userRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
+                return response;
+            }
+
+            await _userRepository.DeleteAsync(id);
+            return response;
         }
 
-        public Task<Response<List<UserModel>>> GetAllAsync(string id = null, string name = null)
+        public async Task<Response<List<UserModel>>> GetAllAsync(Guid id, string name = null)
         {
-            throw new NotImplementedException();
+            var response = new Response<List<UserModel>>();
+
+            if (id != Guid.Empty)
+            {
+                var exists = await _userRepository.ExistByIdAsync(id);
+                if (!exists)
+                {
+                    response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
+                    return response;
+                }
+            }
+
+            var result = await _userRepository.GetAllAsync(id, name);
+            response.Data = result;
+            return response;
         }
 
-        public Task<Response<UserModel>> GetByIdAsync(string id)
+        public async Task<Response<UserModel>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response<UserModel>();
+
+            var exists = await _userRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
+                return response;
+            }
+
+            var result = await _userRepository.GetByIdAsync(id);
+            response.Data = result;
+
+            return response;
         }
 
-        public Task<Response> UpdateAsync(UserModel request)
+        public async Task<Response> UpdateAsync(UserModel request)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var validate = new UserValidation();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
+            var exists = await _userRepository.ExistByIdAsync(request.Id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"User {request.Id} not found."));
+                return response;
+            }
+
+            await _userRepository.UpdateAsync(request);
+            return response;
         }
     }
 }

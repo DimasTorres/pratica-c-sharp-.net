@@ -28,24 +28,73 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public Task<Response> DeleteAsync(string id)
+        public async Task<Response> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var exists = await _clientRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
+                return response;
+            }
+
+            await _clientRepository.DeleteAsync(id);
+            return response;
         }
 
-        public Task<Response<List<ClientModel>>> GetAllAsync(string id = null, string name = null)
+        public async Task<Response<List<ClientModel>>> GetAllAsync(Guid id, string name = null)
         {
-            throw new NotImplementedException();
+            var response = new Response<List<ClientModel>>();
+
+            if (id != Guid.Empty)
+            {
+                var exists = await _clientRepository.ExistByIdAsync(id);
+                if (!exists)
+                {
+                    response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
+                    return response;
+                }
+            }
+
+            var result = await _clientRepository.GetAllAsync(id, name);
+            response.Data = result;
+            return response;
         }
 
-        public Task<Response<ClientModel>> GetByIdAsync(string id)
+        public async Task<Response<ClientModel>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response<ClientModel>();
+
+            var exists = await _clientRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
+                return response;
+            }
+
+            await _clientRepository.GetByIdAsync(id);
+            return response;
         }
 
-        public Task<Response> UpdateAsync(ClientModel request)
+        public async Task<Response> UpdateAsync(ClientModel request)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var validate = new ClientValidation();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
+            var exists = await _clientRepository.ExistByIdAsync(request.Id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Client {request.Id} not found."));
+                return response;
+            }
+
+            await _clientRepository.UpdateAsync(request);
+            return response;
         }
     }
 }
