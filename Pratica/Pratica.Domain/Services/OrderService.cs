@@ -28,24 +28,75 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public Task<Response> DeleteAsync(string id)
+        public async Task<Response> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var exists = await _orderRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Order {id} not found."));
+                return response;
+            }
+
+            await _orderRepository.DeleteAsync(id);
+            return response;
         }
 
-        public Task<Response<List<OrderModel>>> GetAllAsync(string orderId = null, string clientId = null, string userId = null)
+        public async Task<Response<List<OrderModel>>> GetAllAsync(Guid orderId, Guid clientId, Guid userId)
         {
-            throw new NotImplementedException();
+            var response = new Response<List<OrderModel>>();
+
+            if (orderId != Guid.Empty)
+            {
+                var exists = await _orderRepository.ExistByIdAsync(orderId);
+                if (!exists)
+                {
+                    response.ReportErrors.Add(ReportError.Create($"Order {orderId} not found."));
+                    return response;
+                }
+            }
+
+            var result = await _orderRepository.GetAllAsync(orderId, clientId, userId);
+            response.Data = result;
+            return response;
         }
 
-        public Task<Response<OrderModel>> GetByIdAsync(string id)
+        public async Task<Response<OrderModel>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new Response<OrderModel>();
+
+            var exists = await _orderRepository.ExistByIdAsync(id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Order {id} not found."));
+                return response;
+            }
+
+            var result = await _orderRepository.GetByIdAsync(id);
+            response.Data = result;
+
+            return response;
         }
 
-        public Task<Response> UpdateAsync(OrderModel request)
+        public async Task<Response> UpdateAsync(OrderModel request)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            var validate = new OrderValidation();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
+            var exists = await _orderRepository.ExistByIdAsync(request.Id);
+            if (!exists)
+            {
+                response.ReportErrors.Add(ReportError.Create($"Order {request.Id} not found."));
+                return response;
+            }
+
+            await _orderRepository.UpdateAsync(request);
+            return response;
         }
     }
 }

@@ -6,9 +6,9 @@ namespace Pratica.Domain.Interfaces.Repositories
     {
         Task CreateAsync(ProductModel request);
         Task UpdateAsync(ProductModel request);
-        Task ExistByIdAsync(string id);
-        Task DeleteAsync(string id);
-        Task<List<ProductModel>> GetAllAsync(string id = null, string name = null);
-        Task<ProductModel> GetByIdAsync(string id);
+        Task<bool> ExistByIdAsync(Guid id);
+        Task DeleteAsync(Guid id);
+        Task<List<ProductModel>> GetAllAsync(Guid id, string name = null);
+        Task<ProductModel> GetByIdAsync(Guid id);
     }
 }

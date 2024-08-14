@@ -8,12 +8,11 @@ namespace Pratica.Domain.Interfaces.Repositories
         Task CreateItemAsync(OrderItemModel request);
         Task UpdateAsync(OrderModel request);
         Task UpdateItemAsync(OrderItemModel request);
-        Task ExistByIdAsync(string id);
-        Task DeleteAsync(string id);
-        Task DeleteItemAsync(string id);
-        Task<OrderModel> GetByIdAsync(string id);
-        Task<List<OrderModel>> GetAllAsync(string orderId = null, string clientId = null, string userId = null);
-        Task<List<OrderItemModel>> GetItemByOrderIdAsync(string orderId);
-
+        Task<bool> ExistByIdAsync(Guid id);
+        Task DeleteAsync(Guid id);
+        Task DeleteItemAsync(Guid id);
+        Task<OrderModel> GetByIdAsync(Guid id);
+        Task<List<OrderModel>> GetAllAsync(Guid orderId, Guid clientId, Guid userId);
+        Task<List<OrderItemModel>> GetItemByOrderIdAsync(Guid orderId);
     }
 }
