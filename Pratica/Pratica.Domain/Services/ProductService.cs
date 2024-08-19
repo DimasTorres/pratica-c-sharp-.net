@@ -43,13 +43,13 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<ProductModel>>> GetAllAsync(Guid id, string name = null)
+        public async Task<Response<List<ProductModel>>> GetAllAsync(Guid? id, string name = null)
         {
             var response = new Response<List<ProductModel>>();
 
-            if (id != Guid.Empty)
+            if (id is not null && id != Guid.Empty)
             {
-                var exists = await _productRepository.ExistByIdAsync(id);
+                var exists = await _productRepository.ExistByIdAsync(id.Value);
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));

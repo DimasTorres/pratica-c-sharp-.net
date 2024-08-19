@@ -48,13 +48,13 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<UserModel>>> GetAllAsync(Guid id, string name = null)
+        public async Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string name = null)
         {
             var response = new Response<List<UserModel>>();
 
-            if (id != Guid.Empty)
+            if (id is not null && id != Guid.Empty)
             {
-                var exists = await _userRepository.ExistByIdAsync(id);
+                var exists = await _userRepository.ExistByIdAsync(id.Value);
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"User {id} not found."));

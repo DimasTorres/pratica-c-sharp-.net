@@ -9,5 +9,5 @@ public interface IOrderApplication
     Task<Response> UpdateAsync(UpdateOrderRequest request);
     Task<Response> DeleteAsync(Guid id);
     Task<Response> GetByIdAsync(Guid id);
-    Task<Response> GetAllAsync(Guid orderId, Guid clientId, Guid userId);
+    Task<Response> GetAllAsync(Guid? orderId, Guid? clientId, Guid? userId);
 }

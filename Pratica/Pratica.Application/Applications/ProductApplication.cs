@@ -30,7 +30,7 @@ public class ProductApplication : IProductApplication
         return await _productService.DeleteAsync(id);
     }
 
-    public async Task<Response> GetAllAsync(Guid id, string name)
+    public async Task<Response> GetAllAsync(Guid? id, string name)
     {
         return await _productService.GetAllAsync(id, name);
     }

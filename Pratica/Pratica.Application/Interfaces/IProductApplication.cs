@@ -9,5 +9,5 @@ public interface IProductApplication
     Task<Response> UpdateAsync(UpdateProductRequest request);
     Task<Response> DeleteAsync(Guid id);
     Task<Response> GetByIdAsync(Guid id);
-    Task<Response> GetAllAsync(Guid id, string name);
+    Task<Response> GetAllAsync(Guid? id, string name);
 }
