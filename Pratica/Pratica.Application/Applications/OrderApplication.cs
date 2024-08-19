@@ -30,7 +30,7 @@ public class OrderApplication : IOrderApplication
         return await _orderService.DeleteAsync(id);
     }
 
-    public async Task<Response> GetAllAsync(Guid orderId, Guid clientId, Guid userId)
+    public async Task<Response> GetAllAsync(Guid? orderId, Guid? clientId, Guid? userId)
     {
         return await _orderService.GetAllAsync(orderId, clientId, userId);
     }

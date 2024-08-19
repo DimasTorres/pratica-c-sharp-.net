@@ -30,7 +30,7 @@ public class UserApplication : IUserApplication
         return await _userService.DeleteAsync(id);
     }
 
-    public async Task<Response> GetAllAsync(Guid id, string name)
+    public async Task<Response> GetAllAsync(Guid? id, string name)
     {
         return await _userService.GetAllAsync(id, name);
     }

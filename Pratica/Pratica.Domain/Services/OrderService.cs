@@ -43,13 +43,13 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<OrderModel>>> GetAllAsync(Guid orderId, Guid clientId, Guid userId)
+        public async Task<Response<List<OrderModel>>> GetAllAsync(Guid? orderId, Guid? clientId, Guid? userId)
         {
             var response = new Response<List<OrderModel>>();
 
-            if (orderId != Guid.Empty)
+            if (orderId is not null && orderId != Guid.Empty)
             {
-                var exists = await _orderRepository.ExistByIdAsync(orderId);
+                var exists = await _orderRepository.ExistByIdAsync(orderId.Value);
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Order {orderId} not found."));

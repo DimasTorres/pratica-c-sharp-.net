@@ -9,7 +9,7 @@ namespace Pratica.Domain.Interfaces.Services
         Task<Response> CreateAsync(UserModel request);
         Task<Response> UpdateAsync(UserModel request);
         Task<Response> DeleteAsync(Guid id);
-        Task<Response<List<UserModel>>> GetAllAsync(Guid id, string name = null);
+        Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string name = null);
         Task<Response<UserModel>> GetByIdAsync(Guid id);
     }
 }
