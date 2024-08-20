@@ -8,7 +8,7 @@ namespace Pratica.Domain.Interfaces.Repositories
         Task UpdateAsync(ClientModel request);
         Task<bool> ExistByIdAsync(Guid id);
         Task DeleteAsync(Guid id);
-        Task<List<ClientModel>> GetAllAsync(Guid id, string name = null);
+        Task<List<ClientModel>> GetAllAsync(Guid? id, string name = null);
         Task<ClientModel> GetByIdAsync(Guid id);
     }
 }

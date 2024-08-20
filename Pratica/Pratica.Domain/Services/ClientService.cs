@@ -1,4 +1,4 @@
-﻿using Pratica.Domain.Interfaces.Repositories;
+﻿using Pratica.Domain.Interfaces.Repositories.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
 using Pratica.Domain.Validators;
@@ -8,11 +8,11 @@ namespace Pratica.Domain.Services
 {
     public class ClientService : IClientService
     {
-        private readonly IClientRepository _clientRepository;
+        private readonly IUnitOfWork _repository;
 
-        public ClientService(IClientRepository clientRepository)
+        public ClientService(IUnitOfWork repository)
         {
-            _clientRepository = clientRepository;
+            _repository = repository;
         }
 
         public async Task<Response> CreateAsync(ClientModel request)
@@ -24,7 +24,7 @@ namespace Pratica.Domain.Services
             if (validateErrors.ReportErrors.Any())
                 return validateErrors;
 
-            await _clientRepository.CreateAsync(request);
+            await _repository.ClientRepository.CreateAsync(request);
             return response;
         }
 
@@ -32,14 +32,14 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var exists = await _clientRepository.ExistByIdAsync(id);
+            var exists = await _repository.ClientRepository.ExistByIdAsync(id);
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
                 return response;
             }
 
-            await _clientRepository.DeleteAsync(id);
+            await _repository.ClientRepository.DeleteAsync(id);
             return response;
         }
 
@@ -49,7 +49,7 @@ namespace Pratica.Domain.Services
 
             if (id != Guid.Empty)
             {
-                var exists = await _clientRepository.ExistByIdAsync(id);
+                var exists = await _repository.ClientRepository.ExistByIdAsync(id);
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
@@ -57,7 +57,7 @@ namespace Pratica.Domain.Services
                 }
             }
 
-            var result = await _clientRepository.GetAllAsync(id, name);
+            var result = await _repository.ClientRepository.GetAllAsync(id, name);
             response.Data = result;
             return response;
         }
@@ -66,14 +66,14 @@ namespace Pratica.Domain.Services
         {
             var response = new Response<ClientModel>();
 
-            var exists = await _clientRepository.ExistByIdAsync(id);
+            var exists = await _repository.ClientRepository.ExistByIdAsync(id);
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
                 return response;
             }
 
-            await _clientRepository.GetByIdAsync(id);
+            await _repository.ClientRepository.GetByIdAsync(id);
             return response;
         }
 
@@ -86,14 +86,14 @@ namespace Pratica.Domain.Services
             if (validateErrors.ReportErrors.Any())
                 return validateErrors;
 
-            var exists = await _clientRepository.ExistByIdAsync(request.Id);
+            var exists = await _repository.ClientRepository.ExistByIdAsync(request.Id);
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Client {request.Id} not found."));
                 return response;
             }
 
-            await _clientRepository.UpdateAsync(request);
+            await _repository.ClientRepository.UpdateAsync(request);
             return response;
         }
     }
