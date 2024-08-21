@@ -3,12 +3,16 @@
 public static class OrderStatements
 {
     public const string SQL_BASE =
-        @"SELECT [Id]
-              ,[ClientId]
-              ,[UserId]
-              ,[IsDeleted]
-              ,[CreatedAt]
-          FROM [dbo].[Order]
+        @"SELECT o.Id
+              ,o.IsDeleted
+              ,o,CreatedAt
+              ,c.Id
+              ,c.Name
+              ,u.Id
+              ,u.Name
+          FROM [dbo].[Order] o
+          INNER JOIN Client c ON o.ClientId = c.Id
+          INNER JOIN User u ON o.UserId = u.id
           WHERE IsDeleted = 0 ";
 
     public const string SQL_INSERT =

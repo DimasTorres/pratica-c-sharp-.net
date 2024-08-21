@@ -9,10 +9,12 @@ namespace Pratica.Infra.Repositories;
 public class OrderRepository : IOrderRepository
 {
     private readonly IDbConnector _dbConnector;
+    private readonly IOrderItemRepository _orderItemRepository;
 
-    public OrderRepository(IDbConnector dbConnector)
+    public OrderRepository(IDbConnector dbConnector, IOrderItemRepository orderItemRepository)
     {
         _dbConnector = dbConnector;
+        _orderItemRepository = orderItemRepository;
     }
 
     public async Task CreateAsync(OrderModel request)
@@ -28,24 +30,14 @@ public class OrderRepository : IOrderRepository
                 IsDeleted = request.IsDeleted,
                 CreatedAt = request.CreatedAt
             }, _dbConnector.DbTransaction);
-    }
 
-    public async Task CreateItemAsync(OrderItemModel request)
-    {
-        var sql = OrderItemStatements.SQL_INSERT;
-
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
-            new
+        if (request.OrderItems.Any())
+        {
+            foreach (var item in request.OrderItems)
             {
-                Id = request.Id,
-                OrderId = request.Order.Id,
-                ProductId = request.Product.Id,
-                SellValue = request.SellValue,
-                Quantity = request.Quantity,
-                TotalAmount = request.TotalAmout,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
-            }, _dbConnector.DbTransaction);
+                await _orderItemRepository.CreateItemAsync(item);
+            }
+        }
     }
 
     public async Task UpdateAsync(OrderModel request)
@@ -59,38 +51,27 @@ public class OrderRepository : IOrderRepository
                 ClientId = request.Client.Id,
                 UserId = request.User.Id
             }, _dbConnector.DbTransaction);
-    }
 
-    public async Task UpdateItemAsync(OrderItemModel request)
-    {
-        var sql = OrderItemStatements.SQL_UPDATE;
+        if (request.OrderItems.Any())
+        {
+            var sqlItens = OrderItemStatements.SQL_DELETE_BY_ORDERID;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
-            new
+            await _dbConnector.DbConnection.ExecuteAsync(sqlItens,
+                param: new
+                {
+                    OrderId = request.Id
+                }, _dbConnector.DbTransaction);
+
+            foreach (var item in request.OrderItems)
             {
-                Id = request.Id,
-                OrderId = request.Order.Id,
-                ProductId = request.Product.Id,
-                SellValue = request.SellValue,
-                Quantity = request.Quantity,
-                TotalAmount = request.TotalAmout
-            }, _dbConnector.DbTransaction);
+                await _orderItemRepository.CreateItemAsync(item);
+            }
+        }
     }
 
     public async Task DeleteAsync(Guid id)
     {
         var sql = OrderStatements.SQL_DELETE;
-
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
-            new
-            {
-                Id = id
-            }, _dbConnector.DbTransaction);
-    }
-
-    public async Task DeleteItemAsync(Guid id)
-    {
-        var sql = OrderItemStatements.SQL_DELETE;
 
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
@@ -125,8 +106,14 @@ public class OrderRepository : IOrderRepository
         if (userId is not null)
             sql += " AND UserId = @UserId ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel>(sql,
-            new
+        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
+            map: (order, client, user) =>
+            {
+                order.Client = client;
+                order.User = user;
+                return order;
+            },
+            param: new
             {
                 Id = orderId,
                 ClientId = clientId,
@@ -140,8 +127,14 @@ public class OrderRepository : IOrderRepository
     {
         var sql = $"{OrderStatements.SQL_BASE} AND Id = @Id ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel>(sql,
-            new
+        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
+            map: (order, client, user) =>
+            {
+                order.Client = client;
+                order.User = user;
+                return order;
+            },
+            param: new
             {
                 Id = id
             }, _dbConnector.DbTransaction);
@@ -149,16 +142,5 @@ public class OrderRepository : IOrderRepository
         return result.FirstOrDefault()!;
     }
 
-    public async Task<List<OrderItemModel>> GetItemByOrderIdAsync(Guid orderId)
-    {
-        var sql = $"{OrderItemStatements.SQL_BASE} AND OrderId = @OrderId ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderItemModel>(sql,
-            new
-            {
-                OrderId = orderId
-            }, _dbConnector.DbTransaction);
-
-        return result.ToList();
-    }
 }
