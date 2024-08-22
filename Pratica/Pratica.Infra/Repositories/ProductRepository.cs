@@ -21,14 +21,12 @@ public class ProductRepository : IProductRepository
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
+                Id = Guid.NewGuid(),
                 Description = request.Description,
                 SellValue = request.SellValue,
                 Stock = request.Stock,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
-
-
+                IsDeleted = false,
+                CreatedAt = DateTime.UtcNow
             }, _dbConnector.DbTransaction);
     }
     public async Task UpdateAsync(ProductModel request)
@@ -56,7 +54,7 @@ public class ProductRepository : IProductRepository
             }, _dbConnector.DbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(Guid id)
+    public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{ProductStatements.SQL_EXIST}";
 
@@ -69,14 +67,14 @@ public class ProductRepository : IProductRepository
         return result.FirstOrDefault();
     }
 
-    public async Task<List<ProductModel>> GetAllAsync(Guid? id, string? description = null)
+    public async Task<List<ProductModel>> GetAllAsync(Guid? id, string? description)
     {
         var sql = $"{ProductStatements.SQL_BASE}";
 
         if (id is not null)
             sql += " AND Id = @Id ";
 
-        if (string.IsNullOrWhiteSpace(description))
+        if (!string.IsNullOrWhiteSpace(description))
             sql += " AND Description LIKE @Description ";
 
         var result = await _dbConnector.DbConnection.QueryAsync<ProductModel>(sql,

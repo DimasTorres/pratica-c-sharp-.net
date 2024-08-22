@@ -5,15 +5,15 @@ public static class OrderStatements
     public const string SQL_BASE =
         @"SELECT o.Id
               ,o.IsDeleted
-              ,o,CreatedAt
+              ,o.CreatedAt
               ,c.Id
               ,c.Name
               ,u.Id
               ,u.Name
           FROM [dbo].[Order] o
-          INNER JOIN Client c ON o.ClientId = c.Id
-          INNER JOIN User u ON o.UserId = u.id
-          WHERE IsDeleted = 0 ";
+          INNER JOIN [dbo].[Client] c ON o.ClientId = c.Id
+          INNER JOIN [dbo].[User] u ON o.UserId = u.id
+          WHERE o.IsDeleted = 0 ";
 
     public const string SQL_INSERT =
         @"INSERT INTO [dbo].[Order]
@@ -36,7 +36,7 @@ public static class OrderStatements
           WHERE Id = @Id";
 
     public const string SQL_EXIST =
-         @"SELECT 1 FROM Order WHERE IsDeleted = 0 AND Id = @Id";
+         @"SELECT 1 FROM [dbo].[Order] WHERE IsDeleted = 0 AND Id = @Id";
 
     public const string SQL_DELETE =
         @"UPDATE [dbo].[Order]

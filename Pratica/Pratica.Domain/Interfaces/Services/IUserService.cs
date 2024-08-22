@@ -8,8 +8,9 @@ namespace Pratica.Domain.Interfaces.Services
         Task<bool> AuthenticationAsync(UserModel user);
         Task<Response> CreateAsync(UserModel request);
         Task<Response> UpdateAsync(UserModel request);
+        Task<bool> ExistByIdAsync(Guid id);
         Task<Response> DeleteAsync(Guid id);
-        Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string name = null);
+        Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string? name);
         Task<Response<UserModel>> GetByIdAsync(Guid id);
     }
 }

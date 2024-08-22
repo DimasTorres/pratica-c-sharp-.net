@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Pratica.Application.DataContract.User.Request;
+using Pratica.Application.DataContract.User.Response;
 using Pratica.Application.Interfaces;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
@@ -30,9 +31,16 @@ public class UserApplication : IUserApplication
         return await _userService.DeleteAsync(id);
     }
 
-    public async Task<Response> GetAllAsync(Guid? id, string name)
+    public async Task<Response<List<UserResponse>>> GetAllAsync(Guid? id, string? name)
     {
-        return await _userService.GetAllAsync(id, name);
+        var result = await _userService.GetAllAsync(id, name);
+
+        if (result.ReportErrors.Any())
+            return Response.Unprocessable<List<UserResponse>>(result.ReportErrors);
+
+        var response = _mapper.Map<List<UserResponse>>(result.Data);
+
+        return Response.OK(response);
     }
 
     public async Task<Response> GetByIdAsync(Guid id)

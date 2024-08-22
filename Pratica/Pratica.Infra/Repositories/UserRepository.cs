@@ -21,13 +21,13 @@ public class UserRepository : IUserRepository
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
+                Id = Guid.NewGuid(),
                 Name = request.Name,
                 Email = request.Email,
                 Login = request.Login,
                 PasswordHash = request.PasswordHash,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
+                IsDeleted = false,
+                CreatedAt = DateTime.UtcNow
             }, _dbConnector.DbTransaction);
     }
 
@@ -57,7 +57,7 @@ public class UserRepository : IUserRepository
             }, _dbConnector.DbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(Guid id)
+    public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{UserStatements.SQL_EXIST}";
 
@@ -70,16 +70,15 @@ public class UserRepository : IUserRepository
         return result.FirstOrDefault();
     }
 
-    public async Task<List<UserModel>> GetAllAsync(Guid? id, string? name = null)
+    public async Task<List<UserModel>> GetAllAsync(Guid? id, string? name)
     {
         var sql = $"{UserStatements.SQL_BASE}";
 
         if (id is not null)
             sql += " AND Id = @Id ";
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(name))
             sql += " AND Name LIKE @Name ";
-
 
         var result = await _dbConnector.DbConnection.QueryAsync<UserModel>(sql,
             new

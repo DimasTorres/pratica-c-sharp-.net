@@ -32,7 +32,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var exists = await _repository.ClientRepository.ExistByIdAsync(id);
+            var exists = await _repository.ClientRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
@@ -43,13 +43,18 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<ClientModel>>> GetAllAsync(Guid id, string name = null)
+        public async Task<bool> ExistByIdAsync(Guid id)
+        {
+            return await _repository.ClientRepository.ExistByIdAsync(id.ToString());
+        }
+
+        public async Task<Response<List<ClientModel>>> GetAllAsync(Guid? id, string? name)
         {
             var response = new Response<List<ClientModel>>();
 
-            if (id != Guid.Empty)
+            if (id is not null && id != Guid.Empty)
             {
-                var exists = await _repository.ClientRepository.ExistByIdAsync(id);
+                var exists = await _repository.ClientRepository.ExistByIdAsync(id!.Value.ToString());
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
@@ -66,14 +71,15 @@ namespace Pratica.Domain.Services
         {
             var response = new Response<ClientModel>();
 
-            var exists = await _repository.ClientRepository.ExistByIdAsync(id);
+            var exists = await _repository.ClientRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
                 return response;
             }
 
-            await _repository.ClientRepository.GetByIdAsync(id);
+            var result = await _repository.ClientRepository.GetByIdAsync(id);
+            response.Data = result;
             return response;
         }
 

@@ -37,7 +37,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var exists = await _userRepository.ExistByIdAsync(id);
+            var exists = await _userRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
@@ -48,13 +48,18 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string name = null)
+        public async Task<bool> ExistByIdAsync(Guid id)
+        {
+            return await _userRepository.ExistByIdAsync(id.ToString());
+        }
+
+        public async Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string? name)
         {
             var response = new Response<List<UserModel>>();
 
             if (id is not null && id != Guid.Empty)
             {
-                var exists = await _userRepository.ExistByIdAsync(id.Value);
+                var exists = await _userRepository.ExistByIdAsync(id.Value.ToString());
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
@@ -71,7 +76,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response<UserModel>();
 
-            var exists = await _userRepository.ExistByIdAsync(id);
+            var exists = await _userRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"User {id} not found."));

@@ -22,14 +22,14 @@ public class OrderItemRepository : IOrderItemRepository
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
+                Id = Guid.NewGuid(),
                 OrderId = request.Order.Id,
                 ProductId = request.Product.Id,
                 SellValue = request.SellValue,
                 Quantity = request.Quantity,
                 TotalAmount = request.TotalAmout,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
+                IsDeleted = false,
+                CreatedAt = DateTime.UtcNow
             }, _dbConnector.DbTransaction);
     }
 

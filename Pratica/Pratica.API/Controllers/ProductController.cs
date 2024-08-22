@@ -27,9 +27,9 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll(Guid? id, string name)
+    public async Task<ActionResult> GetAll(Guid? id, string? description)
     {
-        var result = await _application.GetAllAsync(id, name);
+        var result = await _application.GetAllAsync(id, description);
 
         if (result.ReportErrors.Any())
             return UnprocessableEntity(result.ReportErrors);

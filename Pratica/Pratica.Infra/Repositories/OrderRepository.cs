@@ -24,11 +24,11 @@ public class OrderRepository : IOrderRepository
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
-                ClientId = request.Client.Id,
-                UserId = request.User.Id,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
+                Id = Guid.NewGuid(),
+                ClientId = request.ClientId,
+                UserId = request.UserId,
+                IsDeleted = false,
+                CreatedAt = DateTime.UtcNow
             }, _dbConnector.DbTransaction);
 
         if (request.OrderItems.Any())
@@ -48,8 +48,8 @@ public class OrderRepository : IOrderRepository
             new
             {
                 Id = request.Id,
-                ClientId = request.Client.Id,
-                UserId = request.User.Id
+                ClientId = request.ClientId,
+                UserId = request.UserId
             }, _dbConnector.DbTransaction);
 
         if (request.OrderItems.Any())
@@ -80,7 +80,7 @@ public class OrderRepository : IOrderRepository
             }, _dbConnector.DbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(Guid id)
+    public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{OrderStatements.SQL_EXIST}";
 
@@ -98,13 +98,13 @@ public class OrderRepository : IOrderRepository
         var sql = $"{OrderStatements.SQL_BASE}";
 
         if (orderId is not null)
-            sql += " AND Id = @Id ";
+            sql += " AND o.Id = @OrderId ";
 
         if (clientId is not null)
-            sql += " AND ClientId = @ClientId ";
+            sql += " AND c.Id = @ClientId ";
 
         if (userId is not null)
-            sql += " AND UserId = @UserId ";
+            sql += " AND u.Id = @UserId ";
 
         var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
             map: (order, client, user) =>
@@ -115,7 +115,7 @@ public class OrderRepository : IOrderRepository
             },
             param: new
             {
-                Id = orderId,
+                OrderId = orderId,
                 ClientId = clientId,
                 UserId = userId
             }, _dbConnector.DbTransaction);
@@ -125,7 +125,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<OrderModel> GetByIdAsync(Guid id)
     {
-        var sql = $"{OrderStatements.SQL_BASE} AND Id = @Id ";
+        var sql = $"{OrderStatements.SQL_BASE} AND o.Id = @Id ";
 
         var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
             map: (order, client, user) =>
@@ -141,6 +141,4 @@ public class OrderRepository : IOrderRepository
 
         return result.FirstOrDefault()!;
     }
-
-
 }

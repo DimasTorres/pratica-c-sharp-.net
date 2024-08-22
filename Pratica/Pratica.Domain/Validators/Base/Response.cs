@@ -9,7 +9,7 @@
 
         public Response(List<ReportError> reportErrors)
         {
-            ReportErrors = reportErrors;
+            ReportErrors = reportErrors ?? new List<ReportError>();
         }
 
         public Response(ReportError reportError) : this(new List<ReportError> { reportError })
@@ -22,11 +22,17 @@
         public static Response OK() => new Response();
         public static Response Unprocessable(List<ReportError> reportErrors) => new Response(reportErrors);
         public static Response Unprocessable(ReportError reportError) => new Response(reportError);
+
+        public static Response<T> Unprocessable<T>(List<ReportError> reportErrors)
+        {
+            return new Response<T>(reportErrors);
+        }
     }
 
     public class Response<T> : Response
     {
         public Response() { }
+        public Response(List<ReportError> reportErrors) : base(reportErrors) { }
         public Response(T data, List<ReportError> reportErrors = null) : base(reportErrors)
         {
             Data = data;

@@ -40,7 +40,7 @@ public static class ClientStatements
          WHERE Id = @Id";
 
     public const string SQL_EXIST =
-        @"SELECT 1 FROM Client WHERE IsDeleted = 0 AND Id = @Id";
+        @"SELECT 1 FROM [dbo].[Client] WHERE IsDeleted = 0 AND Id = @Id";
 
     public const string SQL_DELETE =
         @"UPDATE [dbo].[Client]

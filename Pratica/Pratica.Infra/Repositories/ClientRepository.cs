@@ -20,13 +20,13 @@ public class ClientRepository : IClientRepository
         await _dbConnector.DbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
+                Id = Guid.NewGuid(),
                 Name = request.Name,
                 Address = request.Address,
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
-                IsDeleted = request.IsDeleted,
-                CreatedAt = request.CreatedAt
+                IsDeleted = false,
+                CreatedAt = DateTime.UtcNow
             }, _dbConnector.DbTransaction);
     }
 
@@ -56,7 +56,7 @@ public class ClientRepository : IClientRepository
             }, _dbConnector.DbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(Guid id)
+    public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{ClientStatements.SQL_EXIST}";
 
@@ -69,14 +69,14 @@ public class ClientRepository : IClientRepository
         return result.FirstOrDefault();
     }
 
-    public async Task<List<ClientModel>> GetAllAsync(Guid? id, string? name = null)
+    public async Task<List<ClientModel>> GetAllAsync(Guid? id, string? name)
     {
         var sql = $"{ClientStatements.SQL_BASE}";
 
         if (id is not null)
             sql += " AND Id = @Id ";
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(name))
             sql += " AND Name LIKE @Name ";
 
 

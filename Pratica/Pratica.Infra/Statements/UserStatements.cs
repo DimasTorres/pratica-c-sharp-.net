@@ -40,7 +40,7 @@ public static class UserStatements
             WHERE Id = @Id";
 
     public const string SQL_EXIST =
-         @"SELECT 1 FROM User WHERE IsDeleted = 0 AND Id = @Id";
+         @"SELECT 1 FROM [dbo].[User] WHERE IsDeleted = 0 AND Id = @Id";
 
     public const string SQL_DELETE =
         @"UPDATE [dbo].[User]

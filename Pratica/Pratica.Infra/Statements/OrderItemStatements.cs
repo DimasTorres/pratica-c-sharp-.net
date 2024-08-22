@@ -16,9 +16,9 @@ public static class OrderItemStatements
 	        ,p.Stock
 	        ,p.IsDeleted
 	        ,p.CreatedAt
-        FROM OrderItem oi
-        INNER JOIN [Order] o ON o.id = oi.OrderId
-        INNER JOIN Product p ON p.Id = oi.ProductId
+        FROM [dbo].[OrderItem] oi
+        INNER JOIN [dbo].[Order] o ON o.id = oi.OrderId
+        INNER JOIN [dbo].[Product] p ON p.Id = oi.ProductId
         WHERE oi.IsDeleted = 0 AND p.IsDeleted = 0 ";
 
     public const string SQL_INSERT =
@@ -51,7 +51,7 @@ public static class OrderItemStatements
          WHERE Id = @Id";
 
     public const string SQL_EXIST =
-         @"SELECT 1 FROM OrderItem WHERE IsDeleted = 0 AND Id = @Id";
+         @"SELECT 1 FROM [dbo].[OrderItem] WHERE IsDeleted = 0 AND Id = @Id";
 
     public const string SQL_DELETE =
         @"UPDATE [dbo].[OrderItem]
@@ -59,6 +59,6 @@ public static class OrderItemStatements
          WHERE Id = @Id";
 
     public const string SQL_DELETE_BY_ORDERID =
-        @"DELETE FROM[dbo].[OrderItem]
+        @"DELETE FROM [dbo].[OrderItem]
          WHERE OrderId = @OrderId";
 }

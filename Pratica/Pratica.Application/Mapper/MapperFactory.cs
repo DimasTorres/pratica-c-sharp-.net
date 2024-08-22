@@ -17,6 +17,8 @@ public class MapperFactory : Profile
     {
         ClientMap();
         OrderMap();
+        ProductMap();
+        UserMap();
     }
 
     private void ClientMap()
