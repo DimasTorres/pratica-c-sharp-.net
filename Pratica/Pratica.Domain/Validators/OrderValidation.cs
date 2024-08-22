@@ -7,10 +7,10 @@ namespace Pratica.Domain.Validators
     {
         public OrderValidation()
         {
-            RuleFor(x => x.User)
+            RuleFor(x => x.UserId)
                 .NotNull();
 
-            RuleFor(x => x.Client)
+            RuleFor(x => x.ClientId)
                 .NotNull();
         }
     }

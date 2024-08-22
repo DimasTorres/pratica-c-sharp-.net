@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll(Guid? id, string name)
+    public async Task<ActionResult> GetAll(Guid? id, string? name)
     {
         var result = await _application.GetAllAsync(id, name);
 

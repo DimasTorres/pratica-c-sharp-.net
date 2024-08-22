@@ -9,10 +9,16 @@ namespace Pratica.Domain.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IClientRepository _clientRepository;
+        private readonly IUserRepository _userRepository;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, IClientRepository clientRepository, IUserRepository userRepository)
         {
             _orderRepository = orderRepository;
+            _orderItemRepository = orderItemRepository;
+            _clientRepository = clientRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<Response> CreateAsync(OrderModel request)
@@ -24,6 +30,17 @@ namespace Pratica.Domain.Services
             if (validateErrors.ReportErrors.Any())
                 return validateErrors;
 
+            var clientExist = await _clientRepository.ExistByIdAsync(request.ClientId.ToString()!);
+            if (!clientExist)
+                response.ReportErrors.Add(ReportError.Create($"Client {request.ClientId} not found."));
+
+            var userExist = await _userRepository.ExistByIdAsync(request.UserId.ToString()!);
+            if (!userExist)
+                response.ReportErrors.Add(ReportError.Create($"User {request.UserId} not found."));
+
+            if (response.ReportErrors.Any())
+                return response;
+
             await _orderRepository.CreateAsync(request);
             return response;
         }
@@ -32,7 +49,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var exists = await _orderRepository.ExistByIdAsync(id);
+            var exists = await _orderRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Order {id} not found."));
@@ -49,7 +66,7 @@ namespace Pratica.Domain.Services
 
             if (orderId is not null && orderId != Guid.Empty)
             {
-                var exists = await _orderRepository.ExistByIdAsync(orderId.Value);
+                var exists = await _orderRepository.ExistByIdAsync(orderId.Value.ToString());
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Order {orderId} not found."));
@@ -66,7 +83,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response<OrderModel>();
 
-            var exists = await _orderRepository.ExistByIdAsync(id);
+            var exists = await _orderRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Order {id} not found."));
@@ -90,10 +107,21 @@ namespace Pratica.Domain.Services
 
             var exists = await _orderRepository.ExistByIdAsync(request.Id);
             if (!exists)
-            {
                 response.ReportErrors.Add(ReportError.Create($"Order {request.Id} not found."));
+
+            var clientExist = await _clientRepository.ExistByIdAsync(request.ClientId.ToString()!);
+            if (!clientExist)
+                response.ReportErrors.Add(ReportError.Create($"Client {request.ClientId} not found."));
+
+            var userExist = await _userRepository.ExistByIdAsync(request.UserId.ToString()!);
+            if (!userExist)
+                response.ReportErrors.Add(ReportError.Create($"User {request.UserId} not found."));
+
+            if (response.ReportErrors.Any())
                 return response;
-            }
+
+            var orderItems = await _orderItemRepository.GetItemByOrderIdAsync(new Guid(request.Id));
+            request.OrderItems = orderItems;
 
             await _orderRepository.UpdateAsync(request);
             return response;

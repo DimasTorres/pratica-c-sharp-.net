@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Pratica.Application.DataContract.Client.Request;
+using Pratica.Application.DataContract.Client.Response;
 using Pratica.Application.Interfaces;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
@@ -7,11 +8,11 @@ using Pratica.Domain.Validators.Base;
 
 namespace Pratica.Application.Applications
 {
-    public class ClienteApplication : IClientApplication
+    public class ClientApplication : IClientApplication
     {
         private readonly IClientService _clientService;
         private readonly IMapper _mapper;
-        public ClienteApplication(IClientService clientService, IMapper mapper)
+        public ClientApplication(IClientService clientService, IMapper mapper)
         {
             _clientService = clientService;
             _mapper = mapper;
@@ -29,9 +30,16 @@ namespace Pratica.Application.Applications
             return await _clientService.DeleteAsync(id);
         }
 
-        public async Task<Response> GetAllAsync(Guid id, string name)
+        public async Task<Response<List<ClientResponse>>> GetAllAsync(Guid? id, string? name)
         {
-            return await _clientService.GetAllAsync(id, name);
+            var result = await _clientService.GetAllAsync(id, name);
+
+            if (result.ReportErrors.Any())
+                return Response.Unprocessable<List<ClientResponse>>(result.ReportErrors);
+
+            var response = _mapper.Map<List<ClientResponse>>(result.Data);
+
+            return Response.OK(response);
         }
 
         public async Task<Response> GetByIdAsync(Guid id)

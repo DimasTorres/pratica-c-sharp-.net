@@ -27,7 +27,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll([FromForm] Guid id, [FromForm] string name)
+    public async Task<ActionResult> GetAll([FromForm] Guid? id, [FromForm] string? name)
     {
         var result = await _application.GetAllAsync(id, name);
 
