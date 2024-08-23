@@ -21,37 +21,77 @@ public class UserApplication : IUserApplication
 
     public async Task<Response> CreateAsync(CreateUserRequest request)
     {
-        var userModel = _mapper.Map<UserModel>(request);
+        try
+        {
+            var userModel = _mapper.Map<UserModel>(request);
 
-        return await _userService.CreateAsync(userModel);
+            return await _userService.CreateAsync(userModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> DeleteAsync(Guid id)
     {
-        return await _userService.DeleteAsync(id);
+        try
+        {
+            return await _userService.DeleteAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response<List<UserResponse>>> GetAllAsync(Guid? id, string? name)
     {
-        var result = await _userService.GetAllAsync(id, name);
+        try
+        {
+            var result = await _userService.GetAllAsync(id, name);
 
-        if (result.ReportErrors.Any())
-            return Response.Unprocessable<List<UserResponse>>(result.ReportErrors);
+            if (result.ReportErrors.Any())
+                return Response.Unprocessable<List<UserResponse>>(result.ReportErrors);
 
-        var response = _mapper.Map<List<UserResponse>>(result.Data);
+            var response = _mapper.Map<List<UserResponse>>(result.Data);
 
-        return Response.OK(response);
+            return Response.OK(response);
+        }
+        catch (Exception e)
+        {
+            List<ReportError> listError = [ReportError.Create(e.Message)];
+            return Response.Unprocessable<List<UserResponse>>(listError);
+        }
     }
 
     public async Task<Response> GetByIdAsync(Guid id)
     {
-        return await _userService.GetByIdAsync(id);
+        try
+        {
+            return await _userService.GetByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> UpdateAsync(UpdateUserRequest request)
     {
-        var userModel = _mapper.Map<UserModel>(request);
+        try
+        {
+            var userModel = _mapper.Map<UserModel>(request);
 
-        return await _userService.UpdateAsync(userModel);
+            return await _userService.UpdateAsync(userModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 }

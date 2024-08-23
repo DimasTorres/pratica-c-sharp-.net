@@ -21,47 +21,87 @@ public class OrderApplication : IOrderApplication
 
     public async Task<Response> CreateAsync(CreateOrderRequest request)
     {
-        var orderModel = new OrderModel()
+        try
         {
-            ClientId = request.ClientId,
-            UserId = request.UserId,
-            OrderItems = new List<OrderItemModel>()
-        };
+            var orderModel = new OrderModel()
+            {
+                ClientId = request.ClientId,
+                UserId = request.UserId,
+                OrderItems = new List<OrderItemModel>()
+            };
 
-        return await _orderService.CreateAsync(orderModel);
+            return await _orderService.CreateAsync(orderModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> DeleteAsync(Guid id)
     {
-        return await _orderService.DeleteAsync(id);
+        try
+        {
+            return await _orderService.DeleteAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response<List<OrderResponse>>> GetAllAsync(Guid? orderId, Guid? clientId, Guid? userId)
     {
-        var result = await _orderService.GetAllAsync(orderId, clientId, userId);
+        try
+        {
+            var result = await _orderService.GetAllAsync(orderId, clientId, userId);
 
-        if (result.ReportErrors.Any())
-            return Response.Unprocessable<List<OrderResponse>>(result.ReportErrors);
+            if (result.ReportErrors.Any())
+                return Response.Unprocessable<List<OrderResponse>>(result.ReportErrors);
 
-        var response = _mapper.Map<List<OrderResponse>>(result.Data);
+            var response = _mapper.Map<List<OrderResponse>>(result.Data);
 
-        return Response.OK(response);
+            return Response.OK(response);
+        }
+        catch (Exception e)
+        {
+            List<ReportError> listError = [ReportError.Create(e.Message)];
+            return Response.Unprocessable<List<OrderResponse>>(listError);
+        }
     }
 
     public async Task<Response> GetByIdAsync(Guid id)
     {
-        return await _orderService.GetByIdAsync(id);
+        try
+        {
+            return await _orderService.GetByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> UpdateAsync(UpdateOrderRequest request)
     {
-        var orderModel = new OrderModel()
+        try
         {
-            Id = request.Id.ToString(),
-            ClientId = request.ClientId,
-            UserId = request.UserId
-        };
+            var orderModel = new OrderModel()
+            {
+                Id = request.Id.ToString(),
+                ClientId = request.ClientId,
+                UserId = request.UserId
+            };
 
-        return await _orderService.UpdateAsync(orderModel);
+            return await _orderService.UpdateAsync(orderModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 }

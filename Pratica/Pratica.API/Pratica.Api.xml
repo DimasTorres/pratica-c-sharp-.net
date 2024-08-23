@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Pratica.API</name>
+    </assembly>
+    <members>
+        <member name="M:Pratica.API.Configuration.ConfigurationOpenApi.CreateInfoForApiVersion(System.String,System.Boolean)">
+            <summary>
+            Informações da API
+            </summary>
+        </member>
+        <member name="M:Pratica.API.Controllers.ClientController.GetById(System.Guid)">
+            <summary>
+            Get Client by Id
+            </summary>
+            <param name="id"></param>
+            <returns>Client</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ClientController.GetAll(System.Nullable{System.Guid},System.String)">
+            <summary>
+            Get Clients
+            </summary>
+            <param name="id"></param>
+            <param name="name"></param>
+            <returns>List of Clients</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ClientController.Create(Pratica.Application.DataContract.Client.Request.CreateClientRequest)">
+            <summary>
+            Create Client
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ClientController.Update(Pratica.Application.DataContract.Client.Request.UpdateClientRequest)">
+            <summary>
+            Update Client
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ClientController.Delete(System.Guid)">
+            <summary>
+            Delete Client 
+            </summary>
+            <param name="id"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.OrderController.GetById(System.Guid)">
+            <summary>
+            Get Order by Id
+            </summary>
+            <param name="id"></param>
+            <returns>Order</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.OrderController.GetAll(System.Nullable{System.Guid},System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Get Orders
+            </summary>
+            <param name="orderId"></param>
+            <param name="clientId"></param>
+            <param name="userId"></param>
+            <returns>List of Order</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.OrderController.Create(Pratica.Application.DataContract.Order.Request.CreateOrderRequest)">
+            <summary>
+            Create Order
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.OrderController.Update(Pratica.Application.DataContract.Order.Request.UpdateOrderRequest)">
+            <summary>
+            Update Order
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.OrderController.Delete(System.Guid)">
+            <summary>
+            Delete Order
+            </summary>
+            <param name="id"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ProductController.GetById(System.Guid)">
+            <summary>
+            Get Product by Id
+            </summary>
+            <param name="id"></param>
+            <returns>Product</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ProductController.GetAll(System.Nullable{System.Guid},System.String)">
+            <summary>
+            Get Products
+            </summary>
+            <param name="id"></param>
+            <param name="description"></param>
+            <returns>List of Products</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ProductController.Create(Pratica.Application.DataContract.Product.Request.CreateProductRequest)">
+            <summary>
+            Create Products
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ProductController.Update(Pratica.Application.DataContract.Product.Request.UpdateProductRequest)">
+            <summary>
+            Update Product
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.ProductController.Delete(System.Guid)">
+            <summary>
+            Delete Product
+            </summary>
+            <param name="id"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.UserController.GetById(System.Guid)">
+            <summary>
+            Get User by Id
+            </summary>
+            <param name="id"></param>
+            <returns>User</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.UserController.GetAll(System.Nullable{System.Guid},System.String)">
+            <summary>
+            Get Users
+            </summary>
+            <param name="id"></param>
+            <param name="name"></param>
+            <returns>List of User</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.UserController.Create(Pratica.Application.DataContract.User.Request.CreateUserRequest)">
+            <summary>
+            Create User
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.UserController.Update(Pratica.Application.DataContract.User.Request.UpdateUserRequest)">
+            <summary>
+            Update User
+            </summary>
+            <param name="request"></param>
+            <returns>Status Code</returns>
+        </member>
+        <member name="M:Pratica.API.Controllers.UserController.Delete(System.Guid)">
+            <summary>
+            Delete User
+            </summary>
+            <param name="id"></param>
+            <returns>Status Code</returns>
+        </member>
+    </members>
+</doc>

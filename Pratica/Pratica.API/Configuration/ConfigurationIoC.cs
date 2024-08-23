@@ -9,9 +9,9 @@ using Pratica.Infra.Repositories.Base;
 
 namespace Pratica.API.Configuration;
 
-public class ConfigurationServices
+public static class ConfigurationIoC
 {
-    public static void ConfigureServices(IServiceCollection services)
+    public static void ConfigureIoC(this IServiceCollection services)
     {
         //Add Unit Of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();

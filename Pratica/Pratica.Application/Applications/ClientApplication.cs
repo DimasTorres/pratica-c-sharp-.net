@@ -20,38 +20,78 @@ namespace Pratica.Application.Applications
 
         public async Task<Response> CreateAsync(CreateClientRequest request)
         {
-            var clientModel = _mapper.Map<ClientModel>(request);
+            try
+            {
+                var clientModel = _mapper.Map<ClientModel>(request);
 
-            return await _clientService.CreateAsync(clientModel);
+                return await _clientService.CreateAsync(clientModel);
+            }
+            catch (Exception e)
+            {
+                var responseError = ReportError.Create(e.Message);
+                return Response.Unprocessable(responseError);
+            }
         }
 
         public async Task<Response> DeleteAsync(Guid id)
         {
-            return await _clientService.DeleteAsync(id);
+            try
+            {
+                return await _clientService.DeleteAsync(id);
+            }
+            catch (Exception e)
+            {
+                var responseError = ReportError.Create(e.Message);
+                return Response.Unprocessable(responseError);
+            }
         }
 
         public async Task<Response<List<ClientResponse>>> GetAllAsync(Guid? id, string? name)
         {
-            var result = await _clientService.GetAllAsync(id, name);
+            try
+            {
+                var result = await _clientService.GetAllAsync(id, name);
 
-            if (result.ReportErrors.Any())
-                return Response.Unprocessable<List<ClientResponse>>(result.ReportErrors);
+                if (result.ReportErrors.Any())
+                    return Response.Unprocessable<List<ClientResponse>>(result.ReportErrors);
 
-            var response = _mapper.Map<List<ClientResponse>>(result.Data);
+                var response = _mapper.Map<List<ClientResponse>>(result.Data);
 
-            return Response.OK(response);
+                return Response.OK(response);
+            }
+            catch (Exception e)
+            {
+                List<ReportError> listError = [ReportError.Create(e.Message)];
+                return Response.Unprocessable<List<ClientResponse>>(listError);
+            }
         }
 
         public async Task<Response> GetByIdAsync(Guid id)
         {
-            return await _clientService.GetByIdAsync(id);
+            try
+            {
+                return await _clientService.GetByIdAsync(id);
+            }
+            catch (Exception e)
+            {
+                var responseError = ReportError.Create(e.Message);
+                return Response.Unprocessable(responseError);
+            }
         }
 
         public async Task<Response> UpdateAsync(UpdateClientRequest request)
         {
-            var clientModel = _mapper.Map<ClientModel>(request);
+            try
+            {
+                var clientModel = _mapper.Map<ClientModel>(request);
 
-            return await _clientService.UpdateAsync(clientModel);
+                return await _clientService.UpdateAsync(clientModel);
+            }
+            catch (Exception e)
+            {
+                var responseError = ReportError.Create(e.Message);
+                return Response.Unprocessable(responseError);
+            }
         }
     }
 }

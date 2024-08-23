@@ -7,15 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(MapperFactory));
 builder.Services.AddControllers();
 
-//Add Database
-DbConnectionConfiguration.DbConnectionConfigure(builder);
+//Configure Database
+builder.DbConnectionConfigure();
 
-//Add Services
-ConfigurationServices.ConfigureServices(builder.Services);
+//Configure Ioc
+builder.Services.ConfigureIoC();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//Configure Open Api
+builder.Services.ConfigureOpenApi();
 
 var app = builder.Build();
 

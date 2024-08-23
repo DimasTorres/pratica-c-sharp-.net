@@ -15,6 +15,11 @@ public class UserController : ControllerBase
         _application = application;
     }
 
+    /// <summary>
+    /// Get User by Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>User</returns>
     [HttpGet("id")]
     public async Task<ActionResult> GetById([FromQuery] Guid id)
     {
@@ -26,6 +31,12 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Get Users
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns>List of User</returns>
     [HttpGet]
     public async Task<ActionResult> GetAll(Guid? id, string? name)
     {
@@ -37,6 +48,11 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Create User
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Status Code</returns>
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] CreateUserRequest request)
     {
@@ -48,6 +64,11 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Update User
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Status Code</returns>
     [HttpPut]
     public async Task<ActionResult> Update([FromBody] UpdateUserRequest request)
     {
@@ -59,6 +80,11 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Delete User
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Status Code</returns>
     [HttpDelete]
     public async Task<ActionResult> Delete([FromQuery] Guid id)
     {
