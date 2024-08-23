@@ -32,7 +32,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var exists = await _productRepository.ExistByIdAsync(id);
+            var exists = await _productRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
@@ -43,13 +43,13 @@ namespace Pratica.Domain.Services
             return response;
         }
 
-        public async Task<Response<List<ProductModel>>> GetAllAsync(Guid id, string name = null)
+        public async Task<Response<List<ProductModel>>> GetAllAsync(Guid? id, string? description)
         {
             var response = new Response<List<ProductModel>>();
 
-            if (id != Guid.Empty)
+            if (id is not null && id != Guid.Empty)
             {
-                var exists = await _productRepository.ExistByIdAsync(id);
+                var exists = await _productRepository.ExistByIdAsync(id.Value.ToString());
                 if (!exists)
                 {
                     response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
@@ -57,7 +57,7 @@ namespace Pratica.Domain.Services
                 }
             }
 
-            var result = await _productRepository.GetAllAsync(id, name);
+            var result = await _productRepository.GetAllAsync(id, description);
             response.Data = result;
             return response;
         }
@@ -66,7 +66,7 @@ namespace Pratica.Domain.Services
         {
             var response = new Response<ProductModel>();
 
-            var exists = await _productRepository.ExistByIdAsync(id);
+            var exists = await _productRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));

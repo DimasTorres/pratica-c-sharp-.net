@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pratica.Application.DataContract.Client.Request;
+using Pratica.Application.DataContract.Order.Request;
 using Pratica.Application.Interfaces;
 
 namespace Pratica.API.Controllers;
 
-[Route("api/client")]
+[Route("api/order")]
 [ApiController]
-public class ClientController : ControllerBase
+public class OrderController : ControllerBase
 {
-    private readonly IClientApplication _application;
+    private readonly IOrderApplication _application;
 
-    public ClientController(IClientApplication application)
+    public OrderController(IOrderApplication application)
     {
         _application = application;
     }
@@ -27,9 +27,9 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll([FromForm] Guid? id, [FromForm] string? name)
+    public async Task<ActionResult> GetAll(Guid? orderId, Guid? clientId, Guid? userId)
     {
-        var result = await _application.GetAllAsync(id, name);
+        var result = await _application.GetAllAsync(orderId, clientId, userId);
 
         if (result.ReportErrors.Any())
             return UnprocessableEntity(result.ReportErrors);
@@ -38,7 +38,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] CreateClientRequest request)
+    public async Task<ActionResult> Create([FromBody] CreateOrderRequest request)
     {
         var result = await _application.CreateAsync(request);
 
@@ -49,7 +49,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> Update([FromBody] UpdateClientRequest request)
+    public async Task<ActionResult> Update([FromBody] UpdateOrderRequest request)
     {
         var result = await _application.UpdateAsync(request);
 

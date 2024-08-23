@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Pratica.Application.DataContract.Product.Request;
+using Pratica.Application.DataContract.Product.Response;
 using Pratica.Application.Interfaces;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
@@ -30,9 +31,16 @@ public class ProductApplication : IProductApplication
         return await _productService.DeleteAsync(id);
     }
 
-    public async Task<Response> GetAllAsync(Guid id, string name)
+    public async Task<Response<List<ProductResponse>>> GetAllAsync(Guid? id, string? description)
     {
-        return await _productService.GetAllAsync(id, name);
+        var result = await _productService.GetAllAsync(id, description);
+
+        if (result.ReportErrors.Any())
+            return Response.Unprocessable<List<ProductResponse>>(result.ReportErrors);
+
+        var response = _mapper.Map<List<ProductResponse>>(result.Data);
+
+        return Response.OK(response);
     }
 
     public async Task<Response> GetByIdAsync(Guid id)

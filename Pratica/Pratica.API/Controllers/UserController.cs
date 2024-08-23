@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pratica.Application.DataContract.Client.Request;
+using Pratica.Application.DataContract.User.Request;
 using Pratica.Application.Interfaces;
 
 namespace Pratica.API.Controllers;
 
-[Route("api/client")]
+[Route("api/user")]
 [ApiController]
-public class ClientController : ControllerBase
+public class UserController : ControllerBase
 {
-    private readonly IClientApplication _application;
+    private readonly IUserApplication _application;
 
-    public ClientController(IClientApplication application)
+    public UserController(IUserApplication application)
     {
         _application = application;
     }
@@ -27,7 +27,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll([FromForm] Guid? id, [FromForm] string? name)
+    public async Task<ActionResult> GetAll(Guid? id, string? name)
     {
         var result = await _application.GetAllAsync(id, name);
 
@@ -38,7 +38,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] CreateClientRequest request)
+    public async Task<ActionResult> Create([FromBody] CreateUserRequest request)
     {
         var result = await _application.CreateAsync(request);
 
@@ -49,7 +49,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> Update([FromBody] UpdateClientRequest request)
+    public async Task<ActionResult> Update([FromBody] UpdateUserRequest request)
     {
         var result = await _application.UpdateAsync(request);
 
