@@ -21,37 +21,78 @@ public class ProductApplication : IProductApplication
 
     public async Task<Response> CreateAsync(CreateProductRequest request)
     {
-        var productModel = _mapper.Map<ProductModel>(request);
+        try
+        {
+            var productModel = _mapper.Map<ProductModel>(request);
 
-        return await _productService.CreateAsync(productModel);
+            return await _productService.CreateAsync(productModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> DeleteAsync(Guid id)
     {
-        return await _productService.DeleteAsync(id);
+        try
+        {
+            return await _productService.DeleteAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
+
     }
 
     public async Task<Response<List<ProductResponse>>> GetAllAsync(Guid? id, string? description)
     {
-        var result = await _productService.GetAllAsync(id, description);
+        try
+        {
+            var result = await _productService.GetAllAsync(id, description);
 
-        if (result.ReportErrors.Any())
-            return Response.Unprocessable<List<ProductResponse>>(result.ReportErrors);
+            if (result.ReportErrors.Any())
+                return Response.Unprocessable<List<ProductResponse>>(result.ReportErrors);
 
-        var response = _mapper.Map<List<ProductResponse>>(result.Data);
+            var response = _mapper.Map<List<ProductResponse>>(result.Data);
 
-        return Response.OK(response);
+            return Response.OK(response);
+        }
+        catch (Exception e)
+        {
+            List<ReportError> listError = [ReportError.Create(e.Message)];
+            return Response.Unprocessable<List<ProductResponse>>(listError);
+        }
     }
 
     public async Task<Response> GetByIdAsync(Guid id)
     {
-        return await _productService.GetByIdAsync(id);
+        try
+        {
+            return await _productService.GetByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 
     public async Task<Response> UpdateAsync(UpdateProductRequest request)
     {
-        var productModel = _mapper.Map<ProductModel>(request);
+        try
+        {
+            var productModel = _mapper.Map<ProductModel>(request);
 
-        return await _productService.UpdateAsync(productModel);
+            return await _productService.UpdateAsync(productModel);
+        }
+        catch (Exception e)
+        {
+            var responseError = ReportError.Create(e.Message);
+            return Response.Unprocessable(responseError);
+        }
     }
 }

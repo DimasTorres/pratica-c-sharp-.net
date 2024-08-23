@@ -15,6 +15,11 @@ public class ProductController : ControllerBase
         _application = application;
     }
 
+    /// <summary>
+    /// Get Product by Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Product</returns>
     [HttpGet("id")]
     public async Task<ActionResult> GetById([FromQuery] Guid id)
     {
@@ -26,6 +31,12 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Get Products
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="description"></param>
+    /// <returns>List of Products</returns>
     [HttpGet]
     public async Task<ActionResult> GetAll(Guid? id, string? description)
     {
@@ -37,6 +48,11 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Create Products
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Status Code</returns>
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] CreateProductRequest request)
     {
@@ -48,6 +64,11 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Update Product
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPut]
     public async Task<ActionResult> Update([FromBody] UpdateProductRequest request)
     {
@@ -59,6 +80,11 @@ public class ProductController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Delete Product
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Status Code</returns>
     [HttpDelete]
     public async Task<ActionResult> Delete([FromQuery] Guid id)
     {

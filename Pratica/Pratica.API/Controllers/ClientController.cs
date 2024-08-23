@@ -15,6 +15,11 @@ public class ClientController : ControllerBase
         _application = application;
     }
 
+    /// <summary>
+    /// Get Client by Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Client</returns>
     [HttpGet("id")]
     public async Task<ActionResult> GetById([FromQuery] Guid id)
     {
@@ -26,8 +31,14 @@ public class ClientController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Get Clients
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns>List of Clients</returns>
     [HttpGet]
-    public async Task<ActionResult> GetAll([FromForm] Guid? id, [FromForm] string? name)
+    public async Task<ActionResult> GetAll(Guid? id, string? name)
     {
         var result = await _application.GetAllAsync(id, name);
 
@@ -37,6 +48,11 @@ public class ClientController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Create Client
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Status Code</returns>
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] CreateClientRequest request)
     {
@@ -48,6 +64,11 @@ public class ClientController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Update Client
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Status Code</returns>
     [HttpPut]
     public async Task<ActionResult> Update([FromBody] UpdateClientRequest request)
     {
@@ -59,6 +80,11 @@ public class ClientController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Delete Client 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Status Code</returns>
     [HttpDelete]
     public async Task<ActionResult> Delete([FromQuery] Guid id)
     {

@@ -3,9 +3,9 @@ using Pratica.Infra.DbConnection;
 
 namespace Pratica.API.Configuration;
 
-public class DbConnectionConfiguration
+public static class DbConnectionConfiguration
 {
-    public static void DbConnectionConfigure(WebApplicationBuilder builder)
+    public static void DbConnectionConfigure(this WebApplicationBuilder builder)
     {
         //Add Connection DB
         var config = new ConfigurationBuilder()
