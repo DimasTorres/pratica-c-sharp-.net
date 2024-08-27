@@ -1,113 +1,204 @@
-﻿using Pratica.Domain.Interfaces.Repositories;
+﻿using Pratica.Domain.Interfaces.Repositories.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
 using Pratica.Domain.Models.Base;
 
-namespace Pratica.Domain.Services
+namespace Pratica.Domain.Services;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly IUnitOfWork _repository;
+    private readonly ISecurityService _securityService;
+
+    public UserService(IUnitOfWork repository, ISecurityService securityService)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ISecurityService _securityService;
+        _repository = repository;
+        _securityService = securityService;
+    }
 
-        public UserService(IUserRepository userRepository, ISecurityService securityService)
-        {
-            _userRepository = userRepository;
-            _securityService = securityService;
-        }
+    public async Task<Response<bool>> AuthenticationAsync(string password, UserModel user)
+    {
+        var result = await _securityService.VerifyPassword(password, user);
+        return new Response<bool>(result);
+    }
 
-        public async Task<Response<bool>> AuthenticationAsync(string password, UserModel user)
-        {
-            var result = await _securityService.VerifyPassword(password, user);
-            return new Response<bool>(result);
-        }
+    public async Task<Response> CreateAsync(UserModel request)
+    {
+        var response = new Response<UserModel>();
+        _repository.BeginTransaction();
 
-        public async Task CreateAsync(UserModel request)
+        try
         {
             request.PasswordHash = await _securityService.EncryptPassword(request.PasswordHash);
 
-            await _userRepository.CreateAsync(request);
+            await _repository.UserRepository.CreateAsync(request);
+            _repository.CommitTransaction();
+
+            return response;
         }
-
-        public async Task<Response> DeleteAsync(Guid id)
+        catch (Exception ex)
         {
-            var response = new Response();
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
 
-            var exists = await _userRepository.ExistByIdAsync(id.ToString());
+    public async Task<Response> DeleteAsync(Guid id)
+    {
+        var response = new Response();
+        _repository.BeginTransaction();
+
+        try
+        {
+            var exists = await _repository.UserRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
                 response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
+                _repository.RollbackTransaction();
                 return response;
             }
 
-            await _userRepository.DeleteAsync(id);
+            await _repository.UserRepository.DeleteAsync(id);
+            _repository.CommitTransaction();
             return response;
         }
-
-        public async Task<bool> ExistByIdAsync(Guid id)
+        catch (Exception ex)
         {
-            return await _userRepository.ExistByIdAsync(id.ToString());
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
         }
+    }
 
-        public async Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string? name)
+    public async Task<Response<bool>> ExistByIdAsync(Guid id)
+    {
+        var response = new Response<bool>();
+        _repository.BeginTransaction();
+        try
         {
-            var response = new Response<List<UserModel>>();
+            response.Data = await _repository.UserRepository.ExistByIdAsync(id.ToString());
+            _repository.CommitTransaction();
 
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
+
+    public async Task<Response<List<UserModel>>> GetAllAsync(Guid? id, string? name)
+    {
+        var response = new Response<List<UserModel>>();
+        _repository.BeginTransaction();
+
+        try
+        {
             if (id is not null && id != Guid.Empty)
             {
-                var exists = await _userRepository.ExistByIdAsync(id.Value.ToString());
+                var exists = await _repository.UserRepository.ExistByIdAsync(id.Value.ToString());
                 if (!exists)
                 {
+                    _repository.RollbackTransaction();
                     response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
                     return response;
                 }
             }
 
-            var result = await _userRepository.GetAllAsync(id, name);
+            var result = await _repository.UserRepository.GetAllAsync(id, name);
             response.Data = result;
+
+            _repository.CommitTransaction();
+
             return response;
         }
-
-        public async Task<Response<UserModel>> GetByIdAsync(Guid id)
+        catch (Exception ex)
         {
-            var response = new Response<UserModel>();
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
 
-            var exists = await _userRepository.ExistByIdAsync(id.ToString());
+    public async Task<Response<UserModel>> GetByIdAsync(Guid id)
+    {
+        var response = new Response<UserModel>();
+        _repository.BeginTransaction();
+
+        try
+        {
+            var exists = await _repository.UserRepository.ExistByIdAsync(id.ToString());
             if (!exists)
             {
+                _repository.RollbackTransaction();
                 response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
                 return response;
             }
 
-            var result = await _userRepository.GetByIdAsync(id);
+            var result = await _repository.UserRepository.GetByIdAsync(id);
             response.Data = result;
+
+            _repository.CommitTransaction();
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
+
+    public async Task<Response<UserModel>> GetByLoginAsync(string login)
+    {
+        var response = new Response<UserModel>();
+        _repository.BeginTransaction();
+
+        try
+        {
+            var result = await _repository.UserRepository.GetByLoginAsync(login);
+            response.Data = result;
+
+            _repository.CommitTransaction();
 
             return response;
         }
-
-        public async Task<Response<UserModel>> GetByLoginAsync(string login)
+        catch (Exception ex)
         {
-            var response = new Response<UserModel>();
-
-            var result = await _userRepository.GetByLoginAsync(login);
-            response.Data = result;
-
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
             return response;
         }
+    }
 
-        public async Task<Response> UpdateAsync(UserModel request)
+    public async Task<Response> UpdateAsync(UserModel request)
+    {
+        var response = new Response();
+        _repository.BeginTransaction();
+
+        try
         {
-            var response = new Response();
-
-            var exists = await _userRepository.ExistByIdAsync(request.Id);
+            var exists = await _repository.UserRepository.ExistByIdAsync(request.Id);
             if (!exists)
             {
+                _repository.RollbackTransaction();
                 response.ReportErrors.Add(ReportError.Create($"User {request.Id} not found."));
                 return response;
             }
 
             request.PasswordHash = await _securityService.EncryptPassword(request.PasswordHash);
-            await _userRepository.UpdateAsync(request);
+            await _repository.UserRepository.UpdateAsync(request);
+
+            _repository.CommitTransaction();
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
             return response;
         }
     }

@@ -27,19 +27,18 @@ public class UnitOfWork : IUnitOfWork
 
     public void BeginTransaction()
     {
-        if (DbConnector.DbConnection.State == ConnectionState.Open)
-            DbConnector.DbTransaction = DbConnector.DbConnection.BeginTransaction(IsolationLevel.ReadUncommitted);
+        DbConnector.BeginTransaction(IsolationLevel.ReadUncommitted);
     }
 
     public void CommitTransaction()
     {
-        if (DbConnector.DbConnection.State == ConnectionState.Open)
-            DbConnector.DbTransaction.Commit();
+        if (DbConnector.dbConnection.State == ConnectionState.Open)
+            DbConnector.dbTransaction.Commit();
     }
 
     public void RollbackTransaction()
     {
-        if (DbConnector.DbConnection.State == ConnectionState.Open)
-            DbConnector.DbTransaction.Rollback();
+        if (DbConnector.dbConnection.State == ConnectionState.Open)
+            DbConnector.dbTransaction.Rollback();
     }
 }

@@ -19,7 +19,7 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var sql = OrderItemStatements.SQL_INSERT;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = Guid.NewGuid(),
@@ -30,14 +30,14 @@ public class OrderItemRepository : IOrderItemRepository
                 TotalAmount = request.TotalAmout,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task UpdateItemAsync(OrderItemModel request)
     {
         var sql = OrderItemStatements.SQL_UPDATE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = request.Id,
@@ -46,25 +46,25 @@ public class OrderItemRepository : IOrderItemRepository
                 SellValue = request.SellValue,
                 Quantity = request.Quantity,
                 TotalAmount = request.TotalAmout
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task DeleteItemAsync(Guid id)
     {
         var sql = OrderItemStatements.SQL_DELETE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task<List<OrderItemModel>> GetItemByOrderIdAsync(Guid orderId)
     {
         var sql = $"{OrderItemStatements.SQL_BASE} AND o.Id = @OrderId ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderItemModel, OrderModel, ProductModel, OrderItemModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<OrderItemModel, OrderModel, ProductModel, OrderItemModel>(sql,
             map: (orderItem, order, product) =>
             {
                 orderItem.Order = order;
@@ -74,7 +74,7 @@ public class OrderItemRepository : IOrderItemRepository
             param: new
             {
                 OrderId = orderId
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.ToList();
     }

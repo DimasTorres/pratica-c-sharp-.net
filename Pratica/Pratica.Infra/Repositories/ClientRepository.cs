@@ -17,7 +17,7 @@ public class ClientRepository : IClientRepository
     {
         var sql = ClientStatements.SQL_INSERT;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = Guid.NewGuid(),
@@ -27,14 +27,14 @@ public class ClientRepository : IClientRepository
                 PhoneNumber = request.PhoneNumber,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task UpdateAsync(ClientModel request)
     {
         var sql = ClientStatements.SQL_UPDATE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = request.Id,
@@ -42,29 +42,29 @@ public class ClientRepository : IClientRepository
                 Address = request.Address,
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task DeleteAsync(Guid id)
     {
         var sql = ClientStatements.SQL_DELETE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{ClientStatements.SQL_EXIST}";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<bool>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();
     }
@@ -80,12 +80,12 @@ public class ClientRepository : IClientRepository
             sql += " AND Name LIKE @Name ";
 
 
-        var result = await _dbConnector.DbConnection.QueryAsync<ClientModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<ClientModel>(sql,
             new
             {
                 Id = id,
                 Name = "%" + name + "%"
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.ToList();
     }
@@ -94,11 +94,11 @@ public class ClientRepository : IClientRepository
     {
         var sql = $"{ClientStatements.SQL_BASE} AND Id = @Id ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<ClientModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<ClientModel>(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault()!;
     }

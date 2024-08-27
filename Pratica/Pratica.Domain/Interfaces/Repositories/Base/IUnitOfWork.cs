@@ -6,6 +6,7 @@ public interface IUnitOfWork
 {
     IClientRepository ClientRepository { get; }
     IOrderRepository OrderRepository { get; }
+    IOrderItemRepository OrderItemRepository { get; }
     IProductRepository ProductRepository { get; }
     IUserRepository UserRepository { get; }
     IDbConnector DbConnector { get; }
