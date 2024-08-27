@@ -1,4 +1,4 @@
-﻿namespace Pratica.Domain.Validators.Base
+﻿namespace Pratica.Domain.Models.Base
 {
     public class ReportError
     {

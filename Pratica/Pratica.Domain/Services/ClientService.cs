@@ -1,8 +1,7 @@
 ﻿using Pratica.Domain.Interfaces.Repositories.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Domain.Services
 {
@@ -15,17 +14,9 @@ namespace Pratica.Domain.Services
             _repository = repository;
         }
 
-        public async Task<Response> CreateAsync(ClientModel request)
+        public async Task CreateAsync(ClientModel request)
         {
-            var response = new Response();
-
-            var validate = new ClientValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
-
             await _repository.ClientRepository.CreateAsync(request);
-            return response;
         }
 
         public async Task<Response> DeleteAsync(Guid id)
@@ -86,11 +77,6 @@ namespace Pratica.Domain.Services
         public async Task<Response> UpdateAsync(ClientModel request)
         {
             var response = new Response();
-
-            var validate = new ClientValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
 
             var exists = await _repository.ClientRepository.ExistByIdAsync(request.Id);
             if (!exists)

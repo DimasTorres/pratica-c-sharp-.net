@@ -2,9 +2,11 @@
 using Pratica.Application.DataContract.Client.Request;
 using Pratica.Application.DataContract.Client.Response;
 using Pratica.Application.Interfaces;
+using Pratica.Application.Validators;
+using Pratica.Application.Validators.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Application.Applications
 {
@@ -20,11 +22,18 @@ namespace Pratica.Application.Applications
 
         public async Task<Response> CreateAsync(CreateClientRequest request)
         {
+            var validate = new CreateClientRequestValidator();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
             try
             {
                 var clientModel = _mapper.Map<ClientModel>(request);
 
-                return await _clientService.CreateAsync(clientModel);
+                await _clientService.CreateAsync(clientModel);
+
+                return Response.OK();
             }
             catch (Exception e)
             {
@@ -81,6 +90,11 @@ namespace Pratica.Application.Applications
 
         public async Task<Response> UpdateAsync(UpdateClientRequest request)
         {
+            var validate = new UpdateClientRequestValidator();
+            var validateErrors = validate.Validate(request).GetErrors();
+            if (validateErrors.ReportErrors.Any())
+                return validateErrors;
+
             try
             {
                 var clientModel = _mapper.Map<ClientModel>(request);

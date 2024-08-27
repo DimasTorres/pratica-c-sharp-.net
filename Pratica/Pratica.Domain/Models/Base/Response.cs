@@ -1,4 +1,4 @@
-﻿namespace Pratica.Domain.Validators.Base
+﻿namespace Pratica.Domain.Models.Base
 {
     public class Response
     {
@@ -26,6 +26,11 @@
         public static Response<T> Unprocessable<T>(List<ReportError> reportErrors)
         {
             return new Response<T>(reportErrors);
+        }
+
+        public static Response<T> Unprocessable<T>(ReportError reportError)
+        {
+            return new Response<T>(new List<ReportError>() { reportError });
         }
     }
 

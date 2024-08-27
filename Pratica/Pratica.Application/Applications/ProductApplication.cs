@@ -2,9 +2,11 @@
 using Pratica.Application.DataContract.Product.Request;
 using Pratica.Application.DataContract.Product.Response;
 using Pratica.Application.Interfaces;
+using Pratica.Application.Validators;
+using Pratica.Application.Validators.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Application.Applications;
 
@@ -21,11 +23,17 @@ public class ProductApplication : IProductApplication
 
     public async Task<Response> CreateAsync(CreateProductRequest request)
     {
+        var validate = new CreateProductRequestValidator();
+        var validateErrors = validate.Validate(request).GetErrors();
+        if (validateErrors.ReportErrors.Any())
+            return validateErrors;
+
         try
         {
             var productModel = _mapper.Map<ProductModel>(request);
+            await _productService.CreateAsync(productModel);
 
-            return await _productService.CreateAsync(productModel);
+            return Response.OK();
         }
         catch (Exception e)
         {
@@ -83,6 +91,11 @@ public class ProductApplication : IProductApplication
 
     public async Task<Response> UpdateAsync(UpdateProductRequest request)
     {
+        var validate = new UpdateProductRequestValidator();
+        var validateErrors = validate.Validate(request).GetErrors();
+        if (validateErrors.ReportErrors.Any())
+            return validateErrors;
+
         try
         {
             var productModel = _mapper.Map<ProductModel>(request);

@@ -45,8 +45,9 @@ public class MapperFactory : Profile
     private void UserMap()
     {
         CreateMap<UserModel, UserResponse>();
-        CreateMap<CreateUserRequest, UserModel>();
-        CreateMap<UpdateUserRequest, UserModel>();
+        CreateMap<CreateUserRequest, UserModel>()
+            .ForMember(target => target.PasswordHash, options => options.MapFrom(source => source.Password));
+        CreateMap<UpdateUserRequest, UserModel>()
+            .ForMember(target => target.PasswordHash, options => options.MapFrom(source => source.Password));
     }
-
 }
