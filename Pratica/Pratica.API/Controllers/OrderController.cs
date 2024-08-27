@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pratica.Application.DataContract.Order.Request;
 using Pratica.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Pratica.API.Controllers;
 
 [Route("api/order")]
 [ApiController]
+[Authorize]
 public class OrderController : ControllerBase
 {
     private readonly IOrderApplication _application;

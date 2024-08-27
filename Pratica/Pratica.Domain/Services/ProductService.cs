@@ -1,8 +1,7 @@
 ﻿using Pratica.Domain.Interfaces.Repositories;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Domain.Services
 {
@@ -15,17 +14,9 @@ namespace Pratica.Domain.Services
             _productRepository = productRepository;
         }
 
-        public async Task<Response> CreateAsync(ProductModel request)
+        public async Task CreateAsync(ProductModel request)
         {
-            var response = new Response();
-
-            var validate = new ProductValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
-
             await _productRepository.CreateAsync(request);
-            return response;
         }
 
         public async Task<Response> DeleteAsync(Guid id)
@@ -82,11 +73,6 @@ namespace Pratica.Domain.Services
         public async Task<Response> UpdateAsync(ProductModel request)
         {
             var response = new Response();
-
-            var validate = new ProductValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
 
             var exists = await _productRepository.ExistByIdAsync(request.Id);
             if (!exists)

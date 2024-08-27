@@ -118,6 +118,13 @@
             <param name="id"></param>
             <returns>Status Code</returns>
         </member>
+        <member name="M:Pratica.API.Controllers.UserController.AuthenticateUser(Pratica.Application.DataContract.User.Request.AuthRequest)">
+            <summary>
+            Authentication
+            </summary>
+            <param name="request"></param>
+            <returns>Token</returns>
+        </member>
         <member name="M:Pratica.API.Controllers.UserController.GetById(System.Guid)">
             <summary>
             Get User by Id

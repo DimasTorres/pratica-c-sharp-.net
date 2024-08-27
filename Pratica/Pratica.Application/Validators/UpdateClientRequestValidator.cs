@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
-using Pratica.Domain.Models;
+using Pratica.Application.DataContract.Client.Request;
 
-namespace Pratica.Domain.Validators
+namespace Pratica.Application.Validators
 {
-    public class ClientValidation : AbstractValidator<ClientModel>
+    public class UpdateClientRequestValidator : AbstractValidator<UpdateClientRequest>
     {
-        public ClientValidation()
+        public UpdateClientRequestValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty()
-                .NotNull()
-                .Length(3, 150);
+            .NotEmpty()
+            .NotNull()
+            .Length(3, 250);
 
             RuleFor(x => x.Email)
                 .EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible)

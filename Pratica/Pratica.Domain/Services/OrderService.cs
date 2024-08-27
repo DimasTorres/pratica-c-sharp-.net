@@ -1,8 +1,7 @@
 ﻿using Pratica.Domain.Interfaces.Repositories;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Domain.Services
 {
@@ -25,10 +24,6 @@ namespace Pratica.Domain.Services
         {
             var response = new Response();
 
-            var validate = new OrderValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
 
             var clientExist = await _clientRepository.ExistByIdAsync(request.ClientId.ToString()!);
             if (!clientExist)
@@ -99,11 +94,6 @@ namespace Pratica.Domain.Services
         public async Task<Response> UpdateAsync(OrderModel request)
         {
             var response = new Response();
-
-            var validate = new OrderValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
 
             var exists = await _orderRepository.ExistByIdAsync(request.Id);
             if (!exists)

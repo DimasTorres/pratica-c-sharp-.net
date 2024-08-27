@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pratica.Application.DataContract.Client.Request;
 using Pratica.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Pratica.API.Controllers;
 
 [Route("api/client")]
 [ApiController]
+[Authorize]
 public class ClientController : ControllerBase
 {
     private readonly IClientApplication _application;

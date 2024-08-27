@@ -1,36 +1,32 @@
 ﻿using Pratica.Domain.Interfaces.Repositories;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Domain.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ISecurityService _securityService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ISecurityService securityService)
         {
             _userRepository = userRepository;
+            _securityService = securityService;
         }
 
-        public async Task<bool> AuthenticationAsync(UserModel user)
+        public async Task<Response<bool>> AuthenticationAsync(string password, UserModel user)
         {
-            throw new NotImplementedException();
+            var result = await _securityService.VerifyPassword(password, user);
+            return new Response<bool>(result);
         }
 
-        public async Task<Response> CreateAsync(UserModel request)
+        public async Task CreateAsync(UserModel request)
         {
-            var response = new Response();
-
-            var validate = new UserValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
+            request.PasswordHash = await _securityService.EncryptPassword(request.PasswordHash);
 
             await _userRepository.CreateAsync(request);
-            return response;
         }
 
         public async Task<Response> DeleteAsync(Guid id)
@@ -89,14 +85,19 @@ namespace Pratica.Domain.Services
             return response;
         }
 
+        public async Task<Response<UserModel>> GetByLoginAsync(string login)
+        {
+            var response = new Response<UserModel>();
+
+            var result = await _userRepository.GetByLoginAsync(login);
+            response.Data = result;
+
+            return response;
+        }
+
         public async Task<Response> UpdateAsync(UserModel request)
         {
             var response = new Response();
-
-            var validate = new UserValidation();
-            var validateErrors = validate.Validate(request).GetErrors();
-            if (validateErrors.ReportErrors.Any())
-                return validateErrors;
 
             var exists = await _userRepository.ExistByIdAsync(request.Id);
             if (!exists)
@@ -105,6 +106,7 @@ namespace Pratica.Domain.Services
                 return response;
             }
 
+            request.PasswordHash = await _securityService.EncryptPassword(request.PasswordHash);
             await _userRepository.UpdateAsync(request);
             return response;
         }

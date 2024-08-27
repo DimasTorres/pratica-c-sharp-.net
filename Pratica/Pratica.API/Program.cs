@@ -16,6 +16,9 @@ builder.Services.ConfigureIoC();
 //Configure Open Api
 builder.Services.ConfigureOpenApi();
 
+//Configure Authentication
+builder.ConfigureAuthentication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,7 +30,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 

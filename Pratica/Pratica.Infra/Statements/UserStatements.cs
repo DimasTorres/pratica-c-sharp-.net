@@ -39,8 +39,11 @@ public static class UserStatements
               ,[Email] = @Email
             WHERE Id = @Id";
 
-    public const string SQL_EXIST =
+    public const string SQL_EXIST_BY_ID =
          @"SELECT 1 FROM [dbo].[User] WHERE IsDeleted = 0 AND Id = @Id";
+
+    public const string SQL_EXIST_BY_LOGIN =
+         @"SELECT 1 FROM [dbo].[User] WHERE IsDeleted = 0 AND Login Like @Login";
 
     public const string SQL_DELETE =
         @"UPDATE [dbo].[User]

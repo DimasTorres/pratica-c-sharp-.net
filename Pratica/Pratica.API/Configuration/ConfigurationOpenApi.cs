@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Pratica.API.Configuration;
 
@@ -13,10 +14,16 @@ public static class ConfigurationOpenApi
         {
             options.SwaggerDoc(name: "v1", info: CreateInfoForApiVersion("v1", false));
             options.DescribeAllParametersInCamelCase();
-            //AddSwaggerDefinitionForBearerTokens(options, JdpiAuthorizeConfiguration.SCHEMA,
-            //    JdpiAuthorizeConfiguration.SCHEMA);
-            //options.OperationFilter<AddRequiredHeaderParameter>();
-            //options.OperationFilter<SecurityAuthorizeOperationFilter>();
+
+            options.AddSecurityDefinition(name: "oauth2", securityScheme: new OpenApiSecurityScheme()
+            {
+                Description = "Bearer Token",
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey
+            });
+
+            options.OperationFilter<SecurityRequirementsOperationFilter>();
 
             var xmlApiPath = Path.Combine(AppContext.BaseDirectory, path2: $"{typeof(Program).Assembly.GetName().Name}.xml");
             options.IncludeXmlComments(xmlApiPath);

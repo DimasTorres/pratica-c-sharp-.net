@@ -1,5 +1,5 @@
 ﻿using Pratica.Domain.Models;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Domain.Interfaces.Services
 {

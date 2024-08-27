@@ -2,9 +2,11 @@
 using Pratica.Application.DataContract.Order.Request;
 using Pratica.Application.DataContract.Order.Response;
 using Pratica.Application.Interfaces;
+using Pratica.Application.Validators;
+using Pratica.Application.Validators.Base;
 using Pratica.Domain.Interfaces.Services;
 using Pratica.Domain.Models;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Application.Applications;
 
@@ -21,6 +23,11 @@ public class OrderApplication : IOrderApplication
 
     public async Task<Response> CreateAsync(CreateOrderRequest request)
     {
+        var validate = new CreateOrderRequestValidator();
+        var validateErrors = validate.Validate(request).GetErrors();
+        if (validateErrors.ReportErrors.Any())
+            return validateErrors;
+
         try
         {
             var orderModel = new OrderModel()
@@ -87,6 +94,11 @@ public class OrderApplication : IOrderApplication
 
     public async Task<Response> UpdateAsync(UpdateOrderRequest request)
     {
+        var validate = new UpdateOrderRequestValidator();
+        var validateErrors = validate.Validate(request).GetErrors();
+        if (validateErrors.ReportErrors.Any())
+            return validateErrors;
+
         try
         {
             var orderModel = new OrderModel()

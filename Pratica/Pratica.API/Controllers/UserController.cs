@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pratica.Application.DataContract.User.Request;
 using Pratica.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Pratica.API.Controllers;
 
 [Route("api/user")]
 [ApiController]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserApplication _application;
@@ -14,6 +16,24 @@ public class UserController : ControllerBase
     {
         _application = application;
     }
+
+    /// <summary>
+    /// Authentication
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Token</returns>
+    [AllowAnonymous]
+    [HttpPost("auth")]
+    public async Task<ActionResult> AuthenticateUser([FromBody] AuthRequest request)
+    {
+        var result = await _application.AutheticationAsync(request);
+
+        if (result.ReportErrors.Any())
+            return UnprocessableEntity(result.ReportErrors);
+
+        return Ok(result);
+    }
+
 
     /// <summary>
     /// Get User by Id

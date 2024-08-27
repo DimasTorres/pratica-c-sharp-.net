@@ -1,6 +1,6 @@
 ﻿using Pratica.Application.DataContract.Order.Request;
 using Pratica.Application.DataContract.Order.Response;
-using Pratica.Domain.Validators.Base;
+using Pratica.Domain.Models.Base;
 
 namespace Pratica.Application.Interfaces;
 

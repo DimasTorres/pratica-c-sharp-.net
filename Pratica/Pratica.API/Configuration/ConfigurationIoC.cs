@@ -13,8 +13,12 @@ public static class ConfigurationIoC
 {
     public static void ConfigureIoC(this IServiceCollection services)
     {
-        //Add Unit Of Work
+        //Unit Of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        //Security
+        services.AddScoped<ISecurityService, SecurityService>();
+        services.AddScoped<ITokenManager, TokenManager>();
 
         //Application
         services.AddScoped<IClientApplication, ClientApplication>();

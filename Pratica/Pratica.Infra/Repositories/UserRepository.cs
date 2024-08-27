@@ -59,7 +59,7 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> ExistByIdAsync(string id)
     {
-        var sql = $"{UserStatements.SQL_EXIST}";
+        var sql = $"{UserStatements.SQL_EXIST_BY_ID}";
 
         var result = await _dbConnector.DbConnection.QueryAsync<bool>(sql,
             new
@@ -98,6 +98,19 @@ public class UserRepository : IUserRepository
             new
             {
                 Id = id
+            }, _dbConnector.DbTransaction);
+
+        return result.FirstOrDefault()!;
+    }
+
+    public async Task<UserModel> GetByLoginAsync(string login)
+    {
+        var sql = $"{UserStatements.SQL_BASE} AND Login LIKE @Login ";
+
+        var result = await _dbConnector.DbConnection.QueryAsync<UserModel>(sql,
+            new
+            {
+                Login = login
             }, _dbConnector.DbTransaction);
 
         return result.FirstOrDefault()!;
