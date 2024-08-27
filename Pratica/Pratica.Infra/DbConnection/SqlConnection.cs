@@ -7,16 +7,30 @@ public class SqlConnection : IDbConnector
 {
     public SqlConnection(string connectionString)
     {
-        DbConnection = SqlClientFactory.Instance.CreateConnection();
-        DbConnection.ConnectionString = connectionString;
+        dbConnection = SqlClientFactory.Instance.CreateConnection();
+        dbConnection.ConnectionString = connectionString;
     }
 
-    public IDbConnection DbConnection { get; }
-    public IDbTransaction DbTransaction { get; set; }
+    public IDbConnection dbConnection { get; }
+    public IDbTransaction dbTransaction { get; set; }
+
+    public IDbTransaction BeginTransaction(IsolationLevel isolation)
+    {
+        if (dbTransaction != null)
+        {
+            return dbTransaction;
+        }
+        if (dbConnection.State == ConnectionState.Closed)
+        {
+            dbConnection.Open();
+        }
+
+        return (dbTransaction = dbConnection.BeginTransaction(isolation));
+    }
 
     public void Dispose()
     {
-        DbConnection?.Dispose();
-        DbTransaction?.Dispose();
+        dbConnection?.Dispose();
+        dbTransaction?.Dispose();
     }
 }

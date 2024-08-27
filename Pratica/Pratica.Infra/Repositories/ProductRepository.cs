@@ -18,7 +18,7 @@ public class ProductRepository : IProductRepository
     {
         var sql = ProductStatements.SQL_INSERT;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = Guid.NewGuid(),
@@ -27,42 +27,42 @@ public class ProductRepository : IProductRepository
                 Stock = request.Stock,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
     public async Task UpdateAsync(ProductModel request)
     {
         var sql = ProductStatements.SQL_UPDATE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = request.Id,
                 Description = request.Description,
                 SellValue = request.SellValue,
                 Stock = request.Stock
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task DeleteAsync(Guid id)
     {
         var sql = ProductStatements.SQL_DELETE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{ProductStatements.SQL_EXIST}";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<bool>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();
     }
@@ -77,12 +77,12 @@ public class ProductRepository : IProductRepository
         if (!string.IsNullOrWhiteSpace(description))
             sql += " AND Description LIKE @Description ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<ProductModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<ProductModel>(sql,
             new
             {
                 Id = id,
                 Description = "%" + description + "%"
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.ToList();
     }
@@ -91,11 +91,11 @@ public class ProductRepository : IProductRepository
     {
         var sql = $"{ProductStatements.SQL_BASE} AND Id = @Id ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<ProductModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<ProductModel>(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault()!;
     }

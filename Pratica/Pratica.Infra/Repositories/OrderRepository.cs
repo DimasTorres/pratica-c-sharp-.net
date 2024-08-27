@@ -21,7 +21,7 @@ public class OrderRepository : IOrderRepository
     {
         var sql = OrderStatements.SQL_INSERT;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = Guid.NewGuid(),
@@ -29,7 +29,7 @@ public class OrderRepository : IOrderRepository
                 UserId = request.UserId,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         if (request.OrderItems.Any())
         {
@@ -44,23 +44,23 @@ public class OrderRepository : IOrderRepository
     {
         var sql = OrderStatements.SQL_UPDATE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = request.Id,
                 ClientId = request.ClientId,
                 UserId = request.UserId
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         if (request.OrderItems.Any())
         {
             var sqlItens = OrderItemStatements.SQL_DELETE_BY_ORDERID;
 
-            await _dbConnector.DbConnection.ExecuteAsync(sqlItens,
+            await _dbConnector.dbConnection.ExecuteAsync(sqlItens,
                 param: new
                 {
                     OrderId = request.Id
-                }, _dbConnector.DbTransaction);
+                }, _dbConnector.dbTransaction);
 
             foreach (var item in request.OrderItems)
             {
@@ -73,22 +73,22 @@ public class OrderRepository : IOrderRepository
     {
         var sql = OrderStatements.SQL_DELETE;
 
-        await _dbConnector.DbConnection.ExecuteAsync(sql,
+        await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
     }
 
     public async Task<bool> ExistByIdAsync(string id)
     {
         var sql = $"{OrderStatements.SQL_EXIST}";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<bool>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();
     }
@@ -106,7 +106,7 @@ public class OrderRepository : IOrderRepository
         if (userId is not null)
             sql += " AND u.Id = @UserId ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
             map: (order, client, user) =>
             {
                 order.Client = client;
@@ -118,7 +118,7 @@ public class OrderRepository : IOrderRepository
                 OrderId = orderId,
                 ClientId = clientId,
                 UserId = userId
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.ToList();
     }
@@ -127,7 +127,7 @@ public class OrderRepository : IOrderRepository
     {
         var sql = $"{OrderStatements.SQL_BASE} AND o.Id = @Id ";
 
-        var result = await _dbConnector.DbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
+        var result = await _dbConnector.dbConnection.QueryAsync<OrderModel, ClientModel, UserModel, OrderModel>(sql,
             map: (order, client, user) =>
             {
                 order.Client = client;
@@ -137,7 +137,7 @@ public class OrderRepository : IOrderRepository
             param: new
             {
                 Id = id
-            }, _dbConnector.DbTransaction);
+            }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault()!;
     }
