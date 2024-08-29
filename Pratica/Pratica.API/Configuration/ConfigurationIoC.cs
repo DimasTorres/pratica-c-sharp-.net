@@ -29,6 +29,7 @@ public static class ConfigurationIoC
         //Add Services
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderItemService, OrderItemService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IUserService, UserService>();
 

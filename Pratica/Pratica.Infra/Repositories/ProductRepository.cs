@@ -54,14 +54,14 @@ public class ProductRepository : IProductRepository
             }, _dbConnector.dbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(string id)
+    public async Task<bool> ExistByIdAsync(Guid id)
     {
         var sql = $"{ProductStatements.SQL_EXIST}";
 
         var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();

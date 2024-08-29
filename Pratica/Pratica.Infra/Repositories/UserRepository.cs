@@ -57,14 +57,14 @@ public class UserRepository : IUserRepository
             }, _dbConnector.dbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(string id)
+    public async Task<bool> ExistByIdAsync(Guid id)
     {
         var sql = $"{UserStatements.SQL_EXIST_BY_ID}";
 
         var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();

@@ -39,14 +39,6 @@ public class ClientService : IClientService
 
         try
         {
-            var exists = await _repository.ClientRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
-                return response;
-            }
-
             await _repository.ClientRepository.DeleteAsync(id);
 
             _repository.CommitTransaction();
@@ -63,17 +55,14 @@ public class ClientService : IClientService
     public async Task<Response<bool>> ExistByIdAsync(Guid id)
     {
         var response = new Response<bool>();
-        _repository.BeginTransaction();
         try
         {
-            response.Data = await _repository.ClientRepository.ExistByIdAsync(id.ToString());
+            response.Data = await _repository.ClientRepository.ExistByIdAsync(id);
 
-            _repository.CommitTransaction();
             return response;
         }
         catch (Exception ex)
         {
-            _repository.RollbackTransaction();
             response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
             return response;
         }
@@ -86,17 +75,6 @@ public class ClientService : IClientService
 
         try
         {
-            if (id is not null && id != Guid.Empty)
-            {
-                var exists = await _repository.ClientRepository.ExistByIdAsync(id!.Value.ToString());
-                if (!exists)
-                {
-                    _repository.RollbackTransaction();
-                    response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
-                    return response;
-                }
-            }
-
             var result = await _repository.ClientRepository.GetAllAsync(id, name);
             response.Data = result;
 
@@ -118,14 +96,6 @@ public class ClientService : IClientService
 
         try
         {
-            var exists = await _repository.ClientRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Client {id} not found."));
-                return response;
-            }
-
             var result = await _repository.ClientRepository.GetByIdAsync(id);
             response.Data = result;
 
@@ -147,14 +117,6 @@ public class ClientService : IClientService
 
         try
         {
-            var exists = await _repository.ClientRepository.ExistByIdAsync(request.Id);
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Client {request.Id} not found."));
-                return response;
-            }
-
             await _repository.ClientRepository.UpdateAsync(request);
 
             _repository.CommitTransaction();

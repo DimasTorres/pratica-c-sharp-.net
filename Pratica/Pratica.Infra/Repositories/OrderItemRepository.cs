@@ -18,16 +18,16 @@ public class OrderItemRepository : IOrderItemRepository
     public async Task CreateItemAsync(OrderItemModel request)
     {
         var sql = OrderItemStatements.SQL_INSERT;
-
+        var id = Guid.NewGuid();
         await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
-                Id = Guid.NewGuid(),
-                OrderId = request.Order.Id,
-                ProductId = request.Product.Id,
+                Id = id.ToString(),
+                OrderId = request.OrderId.ToString(),
+                ProductId = request.ProductId.ToString(),
                 SellValue = request.SellValue,
                 Quantity = request.Quantity,
-                TotalAmount = request.TotalAmout,
+                TotalAmout = request.TotalAmout,
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
             }, _dbConnector.dbTransaction);
@@ -41,11 +41,11 @@ public class OrderItemRepository : IOrderItemRepository
             new
             {
                 Id = request.Id,
-                OrderId = request.Order.Id,
-                ProductId = request.Product.Id,
+                OrderId = request.OrderId,
+                ProductId = request.ProductId,
                 SellValue = request.SellValue,
                 Quantity = request.Quantity,
-                TotalAmount = request.TotalAmout
+                TotalAmout = request.TotalAmout
             }, _dbConnector.dbTransaction);
     }
 
@@ -73,7 +73,7 @@ public class OrderItemRepository : IOrderItemRepository
             },
             param: new
             {
-                OrderId = orderId
+                OrderId = orderId.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.ToList();

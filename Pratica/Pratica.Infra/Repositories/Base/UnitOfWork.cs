@@ -27,7 +27,7 @@ public class UnitOfWork : IUnitOfWork
 
     public void BeginTransaction()
     {
-        DbConnector.BeginTransaction(IsolationLevel.ReadUncommitted);
+        DbConnector.BeginTransaction(IsolationLevel.ReadCommitted);
     }
 
     public void CommitTransaction()

@@ -21,19 +21,6 @@ public class OrderService : IOrderService
 
         try
         {
-            var clientExist = await _repository.ClientRepository.ExistByIdAsync(request.ClientId.ToString()!);
-            if (!clientExist)
-                response.ReportErrors.Add(ReportError.Create($"Client {request.ClientId} not found."));
-
-            var userExist = await _repository.UserRepository.ExistByIdAsync(request.UserId.ToString()!);
-            if (!userExist)
-                response.ReportErrors.Add(ReportError.Create($"User {request.UserId} not found."));
-
-            if (response.ReportErrors.Any())
-            {
-                _repository.RollbackTransaction();
-                return response;
-            }
 
             await _repository.OrderRepository.CreateAsync(request);
 
@@ -55,14 +42,6 @@ public class OrderService : IOrderService
 
         try
         {
-            var exists = await _repository.OrderRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Order {id} not found."));
-                return response;
-            }
-
             await _repository.OrderRepository.DeleteAsync(id);
 
             _repository.CommitTransaction();
@@ -83,18 +62,10 @@ public class OrderService : IOrderService
 
         try
         {
-            if (orderId is not null && orderId != Guid.Empty)
-            {
-                var exists = await _repository.OrderRepository.ExistByIdAsync(orderId.Value.ToString());
-                if (!exists)
-                {
-                    _repository.RollbackTransaction();
-                    response.ReportErrors.Add(ReportError.Create($"Order {orderId} not found."));
-                    return response;
-                }
-            }
-
             var result = await _repository.OrderRepository.GetAllAsync(orderId, clientId, userId);
+
+
+
             response.Data = result;
 
             _repository.CommitTransaction();
@@ -115,7 +86,7 @@ public class OrderService : IOrderService
 
         try
         {
-            var exists = await _repository.OrderRepository.ExistByIdAsync(id.ToString());
+            var exists = await _repository.OrderRepository.ExistByIdAsync(id);
             if (!exists)
             {
                 _repository.RollbackTransaction();
@@ -146,27 +117,6 @@ public class OrderService : IOrderService
 
         try
         {
-            var exists = await _repository.OrderRepository.ExistByIdAsync(request.Id);
-            if (!exists)
-                response.ReportErrors.Add(ReportError.Create($"Order {request.Id} not found."));
-
-            var clientExist = await _repository.ClientRepository.ExistByIdAsync(request.ClientId.ToString()!);
-            if (!clientExist)
-                response.ReportErrors.Add(ReportError.Create($"Client {request.ClientId} not found."));
-
-            var userExist = await _repository.UserRepository.ExistByIdAsync(request.UserId.ToString()!);
-            if (!userExist)
-                response.ReportErrors.Add(ReportError.Create($"User {request.UserId} not found."));
-
-            if (response.ReportErrors.Any())
-            {
-                _repository.RollbackTransaction();
-                return response;
-            }
-
-            var orderItems = await _repository.OrderItemRepository.GetItemByOrderIdAsync(new Guid(request.Id));
-            request.OrderItems = orderItems;
-
             await _repository.OrderRepository.UpdateAsync(request);
 
             _repository.CommitTransaction();
@@ -175,6 +125,21 @@ public class OrderService : IOrderService
         catch (Exception ex)
         {
             _repository.RollbackTransaction();
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
+    public async Task<Response<bool>> ExistByIdAsync(Guid id)
+    {
+        var response = new Response<bool>();
+        try
+        {
+            response.Data = await _repository.OrderRepository.ExistByIdAsync(id);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
             response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
             return response;
         }

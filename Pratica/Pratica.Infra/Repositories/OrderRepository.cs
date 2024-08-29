@@ -20,13 +20,14 @@ public class OrderRepository : IOrderRepository
     public async Task CreateAsync(OrderModel request)
     {
         var sql = OrderStatements.SQL_INSERT;
+        var id = Guid.NewGuid();
 
         await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
-                Id = Guid.NewGuid(),
-                ClientId = request.ClientId,
-                UserId = request.UserId,
+                Id = id.ToString(),
+                ClientId = request.ClientId.ToString(),
+                UserId = request.UserId.ToString(),
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow
             }, _dbConnector.dbTransaction);
@@ -35,6 +36,7 @@ public class OrderRepository : IOrderRepository
         {
             foreach (var item in request.OrderItems)
             {
+                item.OrderId = id;
                 await _orderItemRepository.CreateItemAsync(item);
             }
         }
@@ -64,6 +66,7 @@ public class OrderRepository : IOrderRepository
 
             foreach (var item in request.OrderItems)
             {
+                item.OrderId = new Guid(request.Id);
                 await _orderItemRepository.CreateItemAsync(item);
             }
         }
@@ -80,14 +83,14 @@ public class OrderRepository : IOrderRepository
             }, _dbConnector.dbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(string id)
+    public async Task<bool> ExistByIdAsync(Guid id)
     {
         var sql = $"{OrderStatements.SQL_EXIST}";
 
         var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();

@@ -39,14 +39,6 @@ public class ProductService : IProductService
 
         try
         {
-            var exists = await _repository.ProductRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
-                return response;
-            }
-
             await _repository.ProductRepository.DeleteAsync(id);
             _repository.CommitTransaction();
             return response;
@@ -59,6 +51,22 @@ public class ProductService : IProductService
         }
     }
 
+    public async Task<Response<bool>> ExistByIdAsync(Guid id)
+    {
+        var response = new Response<bool>();
+        try
+        {
+            response.Data = await _repository.ProductRepository.ExistByIdAsync(id);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
+            return response;
+        }
+    }
+
     public async Task<Response<List<ProductModel>>> GetAllAsync(Guid? id, string? description)
     {
         var response = new Response<List<ProductModel>>();
@@ -66,17 +74,6 @@ public class ProductService : IProductService
 
         try
         {
-            if (id is not null && id != Guid.Empty)
-            {
-                var exists = await _repository.ProductRepository.ExistByIdAsync(id.Value.ToString());
-                if (!exists)
-                {
-                    _repository.RollbackTransaction();
-                    response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
-                    return response;
-                }
-            }
-
             var result = await _repository.ProductRepository.GetAllAsync(id, description);
             response.Data = result;
             _repository.CommitTransaction();
@@ -97,14 +94,6 @@ public class ProductService : IProductService
 
         try
         {
-            var exists = await _repository.ProductRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Product {id} not found."));
-                return response;
-            }
-
             var result = await _repository.ProductRepository.GetByIdAsync(id);
             response.Data = result;
 
@@ -126,15 +115,6 @@ public class ProductService : IProductService
 
         try
         {
-
-            var exists = await _repository.ProductRepository.ExistByIdAsync(request.Id);
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"Product {request.Id} not found."));
-                return response;
-            }
-
             await _repository.ProductRepository.UpdateAsync(request);
             _repository.CommitTransaction();
             return response;

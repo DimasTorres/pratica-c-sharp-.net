@@ -24,12 +24,14 @@ public class MapperFactory : Profile
     private void ClientMap()
     {
         CreateMap<ClientModel, ClientResponse>();
+        CreateMap<ClientModel, ClientSimpleResponse>();
         CreateMap<CreateClientRequest, ClientModel>();
         CreateMap<UpdateClientRequest, ClientModel>();
     }
     private void OrderMap()
     {
         CreateMap<OrderModel, OrderResponse>();
+        CreateMap<OrderModel, OrderSimpleResponse>();
         CreateMap<CreateOrderRequest, OrderModel>();
         CreateMap<UpdateOrderRequest, OrderModel>();
         CreateMap<OrderItemModel, OrderItemResponse>();
@@ -38,6 +40,7 @@ public class MapperFactory : Profile
     private void ProductMap()
     {
         CreateMap<ProductModel, ProductResponse>();
+        CreateMap<ProductModel, ProductSimpleResponse>();
         CreateMap<CreateProductRequest, ProductModel>();
         CreateMap<UpdateProductRequest, ProductModel>();
     }
@@ -45,6 +48,7 @@ public class MapperFactory : Profile
     private void UserMap()
     {
         CreateMap<UserModel, UserResponse>();
+        CreateMap<UserModel, UserSimpleResponse>();
         CreateMap<CreateUserRequest, UserModel>()
             .ForMember(target => target.PasswordHash, options => options.MapFrom(source => source.Password));
         CreateMap<UpdateUserRequest, UserModel>()

@@ -46,6 +46,10 @@ namespace Pratica.Application.Applications
         {
             try
             {
+                var exists = await _clientService.ExistByIdAsync(id);
+                if (!exists.Data)
+                    return Response.Unprocessable(ReportError.Create($"Client {id} not found."));
+
                 return await _clientService.DeleteAsync(id);
             }
             catch (Exception e)
@@ -97,6 +101,12 @@ namespace Pratica.Application.Applications
 
             try
             {
+                var exists = await _clientService.ExistByIdAsync(request.Id);
+                if (!exists.Data)
+                {
+                    return Response.Unprocessable(ReportError.Create($"Client {request.Id} not found."));
+                }
+
                 var clientModel = _mapper.Map<ClientModel>(request);
 
                 return await _clientService.UpdateAsync(clientModel);

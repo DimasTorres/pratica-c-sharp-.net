@@ -13,13 +13,16 @@ namespace Pratica.Application.Applications;
 public class UserApplication : IUserApplication
 {
     private readonly IUserService _userService;
-    private readonly IMapper _mapper;
+    private readonly ISecurityService _securityService;
     private readonly ITokenManager _tokenManager;
-    public UserApplication(IUserService userService, IMapper mapper, ITokenManager tokenManager)
+    private readonly IMapper _mapper;
+
+    public UserApplication(IUserService userService, ISecurityService securityService, ITokenManager tokenManager, IMapper mapper)
     {
         _userService = userService;
-        _mapper = mapper;
+        _securityService = securityService;
         _tokenManager = tokenManager;
+        _mapper = mapper;
     }
 
     public async Task<Response<AuthResponse>> AutheticationAsync(AuthRequest request)
@@ -75,6 +78,12 @@ public class UserApplication : IUserApplication
     {
         try
         {
+            var exists = await _userService.ExistByIdAsync(id);
+            if (!exists.Data)
+            {
+                return Response.Unprocessable(ReportError.Create($"User {id} not found."));
+            }
+
             return await _userService.DeleteAsync(id);
         }
         catch (Exception e)
@@ -126,7 +135,15 @@ public class UserApplication : IUserApplication
 
         try
         {
+            var exists = await _userService.ExistByIdAsync(request.Id);
+            if (!exists.Data)
+            {
+                return Response.Unprocessable(ReportError.Create($"User {request.Id} not found."));
+            }
+
             var userModel = _mapper.Map<UserModel>(request);
+
+            userModel.PasswordHash = await _securityService.EncryptPassword(request.Password);
 
             return await _userService.UpdateAsync(userModel);
         }
