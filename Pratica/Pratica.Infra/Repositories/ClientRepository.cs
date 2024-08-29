@@ -37,7 +37,7 @@ public class ClientRepository : IClientRepository
         await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
-                Id = request.Id,
+                Id = request.Id.ToString(),
                 Name = request.Name,
                 Address = request.Address,
                 Email = request.Email,
@@ -52,18 +52,18 @@ public class ClientRepository : IClientRepository
         await _dbConnector.dbConnection.ExecuteAsync(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
     }
 
-    public async Task<bool> ExistByIdAsync(string id)
+    public async Task<bool> ExistByIdAsync(Guid id)
     {
         var sql = $"{ClientStatements.SQL_EXIST}";
 
         var result = await _dbConnector.dbConnection.QueryAsync<bool>(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault();
@@ -83,7 +83,7 @@ public class ClientRepository : IClientRepository
         var result = await _dbConnector.dbConnection.QueryAsync<ClientModel>(sql,
             new
             {
-                Id = id,
+                Id = id.ToString(),
                 Name = "%" + name + "%"
             }, _dbConnector.dbTransaction);
 
@@ -97,7 +97,7 @@ public class ClientRepository : IClientRepository
         var result = await _dbConnector.dbConnection.QueryAsync<ClientModel>(sql,
             new
             {
-                Id = id
+                Id = id.ToString()
             }, _dbConnector.dbTransaction);
 
         return result.FirstOrDefault()!;

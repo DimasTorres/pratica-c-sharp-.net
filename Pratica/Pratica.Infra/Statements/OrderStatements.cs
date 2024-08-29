@@ -8,8 +8,12 @@ public static class OrderStatements
               ,o.CreatedAt
               ,c.Id
               ,c.Name
+              ,c.PhoneNumber
+              ,c.Email
+              ,c.Address
               ,u.Id
               ,u.Name
+              ,u.Email
           FROM [dbo].[Order] o
           INNER JOIN [dbo].[Client] c ON o.ClientId = c.Id
           INNER JOIN [dbo].[User] u ON o.UserId = u.id

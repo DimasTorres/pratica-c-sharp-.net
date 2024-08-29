@@ -51,13 +51,7 @@ public class UserService : IUserService
 
         try
         {
-            var exists = await _repository.UserRepository.ExistByIdAsync(id.ToString());
-            if (!exists)
-            {
-                response.ReportErrors.Add(ReportError.Create($"User {id} not found."));
-                _repository.RollbackTransaction();
-                return response;
-            }
+
 
             await _repository.UserRepository.DeleteAsync(id);
             _repository.CommitTransaction();
@@ -74,17 +68,14 @@ public class UserService : IUserService
     public async Task<Response<bool>> ExistByIdAsync(Guid id)
     {
         var response = new Response<bool>();
-        _repository.BeginTransaction();
         try
         {
-            response.Data = await _repository.UserRepository.ExistByIdAsync(id.ToString());
-            _repository.CommitTransaction();
+            response.Data = await _repository.UserRepository.ExistByIdAsync(id);
 
             return response;
         }
         catch (Exception ex)
         {
-            _repository.RollbackTransaction();
             response.ReportErrors.Add(ReportError.Create($"Transaction not completed. Error message: {ex.Message}"));
             return response;
         }
@@ -99,7 +90,7 @@ public class UserService : IUserService
         {
             if (id is not null && id != Guid.Empty)
             {
-                var exists = await _repository.UserRepository.ExistByIdAsync(id.Value.ToString());
+                var exists = await _repository.UserRepository.ExistByIdAsync(id.Value);
                 if (!exists)
                 {
                     _repository.RollbackTransaction();
@@ -130,7 +121,7 @@ public class UserService : IUserService
 
         try
         {
-            var exists = await _repository.UserRepository.ExistByIdAsync(id.ToString());
+            var exists = await _repository.UserRepository.ExistByIdAsync(id);
             if (!exists)
             {
                 _repository.RollbackTransaction();
@@ -181,14 +172,6 @@ public class UserService : IUserService
 
         try
         {
-            var exists = await _repository.UserRepository.ExistByIdAsync(request.Id);
-            if (!exists)
-            {
-                _repository.RollbackTransaction();
-                response.ReportErrors.Add(ReportError.Create($"User {request.Id} not found."));
-                return response;
-            }
-
             request.PasswordHash = await _securityService.EncryptPassword(request.PasswordHash);
             await _repository.UserRepository.UpdateAsync(request);
 

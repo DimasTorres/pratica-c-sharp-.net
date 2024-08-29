@@ -10,4 +10,5 @@ public interface IProductService
     Task<Response> DeleteAsync(Guid id);
     Task<Response<List<ProductModel>>> GetAllAsync(Guid? id, string? name);
     Task<Response<ProductModel>> GetByIdAsync(Guid id);
+    Task<Response<bool>> ExistByIdAsync(Guid id);
 }

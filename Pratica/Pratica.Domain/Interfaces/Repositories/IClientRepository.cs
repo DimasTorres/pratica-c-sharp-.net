@@ -6,7 +6,7 @@ namespace Pratica.Domain.Interfaces.Repositories
     {
         Task CreateAsync(ClientModel request);
         Task UpdateAsync(ClientModel request);
-        Task<bool> ExistByIdAsync(string id);
+        Task<bool> ExistByIdAsync(Guid id);
         Task DeleteAsync(Guid id);
         Task<List<ClientModel>> GetAllAsync(Guid? id, string? name);
         Task<ClientModel> GetByIdAsync(Guid id);

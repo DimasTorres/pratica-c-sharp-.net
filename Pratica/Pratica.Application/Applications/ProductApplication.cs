@@ -46,6 +46,12 @@ public class ProductApplication : IProductApplication
     {
         try
         {
+            var exists = await _productService.ExistByIdAsync(id);
+            if (!exists.Data)
+            {
+                return Response.Unprocessable(ReportError.Create($"Product {id} not found."));
+            }
+
             return await _productService.DeleteAsync(id);
         }
         catch (Exception e)
@@ -60,6 +66,16 @@ public class ProductApplication : IProductApplication
     {
         try
         {
+            if (id is not null && id != Guid.Empty)
+            {
+                var exists = await _productService.ExistByIdAsync(id.Value);
+                if (!exists.Data)
+                {
+                    List<ReportError> listError = [ReportError.Create($"Product {id} not found.")];
+                    return Response.Unprocessable<List<ProductResponse>>(listError);
+                }
+            }
+
             var result = await _productService.GetAllAsync(id, description);
 
             if (result.ReportErrors.Any())
@@ -98,6 +114,12 @@ public class ProductApplication : IProductApplication
 
         try
         {
+            var exists = await _productService.ExistByIdAsync(request.Id);
+            if (!exists.Data)
+            {
+                return Response.Unprocessable(ReportError.Create($"Product {request.Id} not found."));
+            }
+
             var productModel = _mapper.Map<ProductModel>(request);
 
             return await _productService.UpdateAsync(productModel);

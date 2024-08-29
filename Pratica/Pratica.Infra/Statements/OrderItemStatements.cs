@@ -13,11 +13,8 @@ public static class OrderItemStatements
 	        ,p.Id
 	        ,p.[Description]
 	        ,p.SellValue
-	        ,p.Stock
-	        ,p.IsDeleted
-	        ,p.CreatedAt
         FROM [dbo].[OrderItem] oi
-        INNER JOIN [dbo].[Order] o ON o.id = oi.OrderId
+        INNER JOIN [dbo].[Order] o ON o.Id = oi.OrderId
         INNER JOIN [dbo].[Product] p ON p.Id = oi.ProductId
         WHERE oi.IsDeleted = 0 AND p.IsDeleted = 0 ";
 
