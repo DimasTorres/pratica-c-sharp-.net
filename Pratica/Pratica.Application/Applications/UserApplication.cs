@@ -38,7 +38,7 @@ public class UserApplication : IUserApplication
             if (user.ReportErrors.Any())
                 return Response.Unprocessable<AuthResponse>(user.ReportErrors);
 
-            var isAuthenticated = await _userService.AuthenticationAsync(request.Password, user.Data);
+            var isAuthenticated = await _userService.AuthenticationAsync(request.Password, user.Data.PasswordHash);
             if (!isAuthenticated.Data)
                 return Response.Unprocessable<AuthResponse>(ReportError.Create("Password is incorrect."));
 
@@ -62,6 +62,8 @@ public class UserApplication : IUserApplication
         try
         {
             var userModel = _mapper.Map<UserModel>(request);
+
+            userModel.PasswordHash = await _securityService.EncryptPassword(request.Password);
 
             await _userService.CreateAsync(userModel);
 
