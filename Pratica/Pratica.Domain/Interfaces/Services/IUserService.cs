@@ -5,7 +5,7 @@ namespace Pratica.Domain.Interfaces.Services;
 
 public interface IUserService
 {
-    Task<Response<bool>> AuthenticationAsync(string password, UserModel user);
+    Task<Response<bool>> AuthenticationAsync(string password, string passwordHash);
     Task<Response> CreateAsync(UserModel request);
     Task<Response> UpdateAsync(UserModel request);
     Task<Response<bool>> ExistByIdAsync(Guid id);
